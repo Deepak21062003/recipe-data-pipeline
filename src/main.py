@@ -30,6 +30,10 @@ def final_is_valid_ingredient(name: str) -> bool:
     # Too long → not a noun
     if len(name.split()) > 3:
         return False
+        
+    # Block ambiguous/incomplete words
+    if name in {"baking", "recipe", "recipes", "mix", "powder"}:
+        return False
 
     return True
 
@@ -47,10 +51,17 @@ def final_cleanup_ingredient_name(name: str) -> str:
 
     name = name.lower()
 
-    # 1️⃣ Remove ALL symbols anywhere
-    name = re.sub(r'[\/,\-–—]+', ' ', name)
+    # 1️⃣ Remove "recipe" or "recipes" noise
+    name = re.sub(r'\b(recipes?)\b', '', name)
 
-    # 2️⃣ Remove quantity / size words (dynamic)
+    # 2️⃣ Remove leading articles
+    name = re.sub(r'^(a|an|the)\s+', '', name)
+
+    # 3️⃣ Remove ALL symbols anywhere (enhanced)
+    # Put hyphen at the end to avoid creating a range (comma to en-dash swallowed letters!)
+    name = re.sub(r'[\\/,–—\(\)\[\]\{\}-]+', ' ', name)
+
+    # 4️⃣ Remove quantity / size words (dynamic)
     name = re.sub(
         r'\b(a\s+few|few|a\s+pinch|pinch|a\s+handful|handful|'
         r'small|medium|large|medium\s+sized|large\s+sized)\b',
@@ -58,7 +69,7 @@ def final_cleanup_ingredient_name(name: str) -> str:
         name
     )
 
-    # 3️⃣ Remove preparation/state words
+    # 5️⃣ Remove preparation/state words
     name = re.sub(
         r'\b(whole|fresh|dried|raw|ripe|peeled|deseeded|'
         r'chopped|cubed|sliced|minced|grated|crushed|boiled|fine|finely)\b',
@@ -66,22 +77,17 @@ def final_cleanup_ingredient_name(name: str) -> str:
         name
     )
 
-    # 4️⃣ Remove connectors
-    name = re.sub(r'\b(and|or)\b', '', name)
+    # 6️⃣ Remove connectors
+    name = re.sub(r'\b(and|or|with)\b', '', name)
 
-    # 5️⃣ Normalize plurals safely - REDUNDANT with rapidfuzz standard list
-    # name = re.sub(r'ies\b', 'y', name)
-    # name = re.sub(r'es\b', '', name)
-    # name = re.sub(r's\b', '', name)
-
-    # 6️⃣ Collapse duplicate words
+    # 7️⃣ Collapse duplicate words
     tokens = []
     for w in name.split():
         if w not in tokens:
             tokens.append(w)
     name = " ".join(tokens)
 
-    # 7️⃣ Final whitespace cleanup
+    # 8️⃣ Final whitespace cleanup
     name = re.sub(r'\s+', ' ', name).strip()
 
     return name

@@ -24,7 +24,7 @@ def final_is_valid_ingredient(name: str) -> bool:
         return False
 
     # Reject instruction-like phrases
-    if re.match(r'^(add|serve|make|mix|stir|cook|boil|fry|pour|to)\b', name):
+    if re.match(r'^(add|serve|make|mix|stir|cook|boil|fry|pour|to|when|in|heat|after|while|let|once)\b', name):
         return False
 
     # Too long → not a noun
@@ -149,7 +149,24 @@ def process_recipe(recipe: dict) -> dict:
             parsed.setdefault("ingredient_info", {})
             parsed["ingredient_info"]["unit_conversion"] = note
 
-        parsed_ingredients.append(parsed)
+        # MERGE DUPLICATES
+        # Key: (name, unit)
+        key = (clean_name, unit)
+        
+        # Check if already exists in parsed_ingredients
+        found = False
+        for existing in parsed_ingredients:
+            if existing["ingredient_name"] == clean_name and existing["unit"] == unit:
+                # Merge
+                if existing["quantity"] is not None and qty is not None:
+                    existing["quantity"] += qty
+                elif qty is not None:
+                     existing["quantity"] = qty
+                found = True
+                break
+        
+        if not found:
+             parsed_ingredients.append(parsed)
 
     instructions = clean_instructions(
         json.loads(recipe.get("prep_steps", "[]")) +

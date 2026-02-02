@@ -124,6 +124,10 @@ def clean_ingredient_name(text: str) -> str:
 # Main Parser
 # -----------------------------
 def parse_ingredient(raw_text: str) -> Dict:
+    # Handle options "X or Y" -> take X
+    if " or " in raw_text:
+        raw_text = raw_text.split(" or ")[0]
+
     text = normalize_text(raw_text)
 
     is_optional = detect_optional(text)

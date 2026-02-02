@@ -24,7 +24,7 @@ def final_is_valid_ingredient(name: str) -> bool:
         return False
 
     # Reject instruction-like phrases
-    if re.match(r'^(add|serve|make|mix|stir|cook|boil|fry|pour|to|when|in|heat|after|while|let|once)\b', name):
+    if re.match(r'^(add|serve|make|mix|stir|cook|boil|fry|pour|to|when|in|heat|after|while|let|once|easily|halve|roughly|finely)\b', name):
         return False
 
     # Too long → not a noun
@@ -149,20 +149,29 @@ def process_recipe(recipe: dict) -> dict:
             parsed.setdefault("ingredient_info", {})
             parsed["ingredient_info"]["unit_conversion"] = note
 
-        # MERGE DUPLICATES
-        # Key: (name, unit)
-        key = (clean_name, unit)
-        
-        # Check if already exists in parsed_ingredients
+        # MERGE DUPLICATES (Strict Name Deduplication)
         found = False
         for existing in parsed_ingredients:
-            if existing["ingredient_name"] == clean_name and existing["unit"] == unit:
-                # Merge
-                if existing["quantity"] is not None and qty is not None:
-                    existing["quantity"] += qty
-                elif qty is not None:
-                     existing["quantity"] = qty
+            if existing["ingredient_name"] == clean_name:
                 found = True
+                
+                # Case 1: Exact unit match -> Sum
+                if existing["unit"] == unit:
+                    if existing["quantity"] is not None and qty is not None:
+                        existing["quantity"] += qty
+                    elif qty is not None:
+                         existing["quantity"] = qty
+                         
+                # Case 2: Existing has NO unit, New has unit -> Overwrite with New
+                elif existing["unit"] is None and unit is not None:
+                    existing["unit"] = unit
+                    existing["quantity"] = qty # Replace ambiguous qty with valid one
+                    if note: # Update conversion note
+                        existing.setdefault("ingredient_info", {})
+                        existing["ingredient_info"]["unit_conversion"] = note
+
+                # Case 3: Existing has unit, New has NO unit -> Ignore New (assuming it's noise)
+                # Case 4: Mismatched units (e.g. g vs ml) -> Ignore New to enforce unique name
                 break
         
         if not found:

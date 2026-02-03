@@ -1,101 +1,510 @@
-"id","meal_id","recipe_id","recipe_name","order_index","is_main_dish","is_optional"
-1,1,1,"Chicken Kolhapuri",NULL,True,False
-2,2,2,"Veg Kurma Recipe (Vegetable Korma)",NULL,True,False
-3,3,3,"Mushroom Curry (Mushroom Masala)",NULL,True,False
-4,4,4,"Paneer Tikka Masala Recipe",NULL,True,False
-5,5,5,"Paneer Do Pyaza",NULL,True,False
-6,6,6,"Masala Dosa",NULL,True,False
-7,7,7,"Idli Sambar",NULL,True,False
-8,8,8,"Greek Yogurt Bowl",NULL,True,False
-9,9,9,"Filter Coffee Recipe (South Indian Coffee)",NULL,True,False
-10,10,10,"Cold Coffee Recipe (Iced Coffee)",NULL,True,False
-11,11,11,"Badam Milk Recipe (Creamy Indian Almond Drink)",NULL,True,False
-12,12,12,"Poha",NULL,True,False
-13,13,13,"Perfect Upma",NULL,True,False
-14,14,14,"Aloo Paratha",NULL,True,False
-15,15,15,"Chilli Paneer Paratha",NULL,True,False
-16,16,16,"Chicken Chettinad Gravy Recipe",NULL,True,False
-17,17,17,"Vegetable Sandwich",NULL,True,False
-18,18,18,"Indian Egg Bhurji",NULL,True,False
-19,19,19,"Plain Omelette",NULL,True,False
-20,20,20,"Masala Omelette",NULL,True,False
-21,21,21,"Rava Kesari",NULL,True,False
-22,22,22,"Brioche French Toast",NULL,True,False
-23,23,23,"Classic Pancakes",NULL,True,False
-24,24,24,"Upgraded Oats Porridge",NULL,True,False
-25,25,25,"Vegetable Oats Upma",NULL,True,False
-26,26,26,"16 Beetroot Recipes from Indian Cuisine",NULL,True,False
-27,27,27,"Sabudana Khichdi",NULL,True,False
-28,28,28,"Poori Bhaji",NULL,True,False
-29,29,29,"Chole Bhature Breakfast Plate",NULL,True,False
-30,30,30,"Egg Fried Rice Breakfast",NULL,True,False
-31,31,31,"Banana Smoothie Bowl",NULL,True,False
-32,32,32,"Vegetable Poha Cutlets",NULL,True,False
-33,33,33,"Bread Pakora",NULL,True,False
-34,34,34,"Stuffed Cheese Garlic Bread",NULL,True,False
-35,35,35,"Sprouts Salad Bowl",NULL,True,False
-36,36,36,"High-Protein Chocolate Peanut Butter Breakfast Parfait",NULL,True,False
-37,37,37,"Blue Raspberry Smoothie Bowl",NULL,True,False
-38,38,38,"Mango Smoothie Bowl",NULL,True,False
-39,39,39,"Besan Chilla",NULL,True,False
-40,40,40,"Moong Dal Chilla",NULL,True,False
-41,41,41,"Rava Idli",NULL,True,False
-42,42,42,"Instant Set Dosa",NULL,True,False
-43,43,43,"Neer Dosa",NULL,True,False
-44,44,44,"Andhra Special Pesarattu",NULL,True,False
-45,45,45,"Onion Uttapam",NULL,True,False
-46,46,46,"Uttapam - Mixed Veg",NULL,True,False
-47,47,47,"Eggless Banana Muffins",NULL,True,False
-48,48,48,"Veggie Egg Muffins",NULL,True,False
-49,49,49,"Breakfast Burrito - Veg",NULL,True,False
-50,50,50,"Simple Breakfast Burrito - Egg and Sausage",NULL,True,False
-51,51,51,"Amazing Creamy Avocado Toast",NULL,True,False
-52,52,52,"Tomato Cheese Toast",NULL,True,False
-53,53,53,"Crispy Fried Chicken Sandwich With Honey-Sriracha Sauce on a Brioche Bun",NULL,True,False
-54,54,54,"Creamy Egg Salad Sandwich",NULL,True,False
-55,55,55,"Homemade Granola",NULL,True,False
-56,56,56,"Paneer Bhurji",NULL,True,False
-57,57,57,"Stuffed Capsicum Omelette",NULL,True,False
-58,58,58,"Masala Maggi Breakfast",NULL,True,False
-59,59,59,"Thalipeeth",NULL,True,False
-60,60,60,"Travel Friendly Methi Thepla",NULL,True,False
-61,61,61,"Masala Cornflakes Mix",NULL,True,False
-62,62,62,"Vegetable Sevai Upma",NULL,True,False
-63,63,63,"Idiyappam with Hotel Style Vegetable Kurma",NULL,True,False
-64,64,64,"Appam with Vegetable Stew",NULL,True,False
-65,65,65,"Instant Ragi Dosa",NULL,True,False
-66,66,66,"Ragi Idli",NULL,True,False
-67,67,67,"Millet Upma",NULL,True,False
-68,68,68,"Korra Pongal",NULL,True,False
-69,69,69,"Ven Pongal",NULL,True,False
-70,70,70,"Sweet Pongal",NULL,True,False
-71,71,71,"Dal Khichdi",NULL,True,False
-72,72,72,"Masala Sabudana Vada",NULL,True,False
-73,73,73,"Egg Cheese Toast",NULL,True,False
-74,74,74,"Cheesy Scrambled Eggs",NULL,True,False
-75,75,75,"Aloo Gobi Recipe",NULL,True,False
-76,76,76,"Baingan Bharta Recipe (Eggplant Bharta)",NULL,True,False
-77,77,77,"Bhindi Fry Recipe | Okra Stir Fry",NULL,True,False
-78,78,78,"Stuffed Capsicum | Stuffed Bell Peppers Recipe",NULL,True,False
-79,79,79,"Veg Burger Recipe (Veggie Burger)",NULL,True,False
-80,80,80,"Navratan Korma Recipe (Navratan Curry)",NULL,True,False
-81,81,81,"Veg Biryani",NULL,True,False
-82,82,82,"Chicken Biryani",NULL,True,False
-83,83,83,"Chana Masala Recipe (Chickpea Masala)",NULL,True,False
-84,84,84,"Paneer Butter Masala",NULL,True,False
-85,85,85,"Dal Tadka",NULL,True,False
-86,86,86,"Rajma Chawal",NULL,True,False
-87,87,87,"Chole Bhature",NULL,True,False
-88,88,88,"Jeera Rice with Dal Fry",NULL,True,False
-89,89,89,"Lemon Rice",NULL,True,False
-90,90,90,"Thecha Curd Rice",NULL,True,False
-91,91,91,"Veg Pulao",NULL,True,False
-92,92,92,"Mushroom Masala",NULL,True,False
-93,93,93,"Kadai Paneer",NULL,True,False
-94,94,94,"Palak Paneer",NULL,True,False
-95,95,95,"Aloo Gobi",NULL,True,False
-96,96,96,"Restaurant Style Mix Veg Curry",NULL,True,False
-97,97,97,"Butter Chicken",NULL,True,False
-98,98,98,"Rohu Fish Curry",NULL,True,False
-99,99,99,"Egg Curry (Dhaba Style)",NULL,True,False
-100,100,100,"Chicken Maharani Curry",NULL,True,False
+id,meal_id,recipe_id,recipe_name,order_index,is_main_dish,is_optional
+1,1,1,Chicken Kolhapuri,,True,False
+2,2,2,Veg Kurma Recipe (Vegetable Korma),,True,False
+3,3,3,Mushroom Curry (Mushroom Masala),,True,False
+4,4,4,Paneer Tikka Masala Recipe,,True,False
+5,5,5,Paneer Do Pyaza,,True,False
+6,6,6,Masala Dosa,,True,False
+7,7,7,Idli Sambar,,True,False
+8,8,8,Greek Yogurt Bowl,,True,False
+9,9,9,Filter Coffee Recipe (South Indian Coffee),,True,False
+10,10,10,Cold Coffee Recipe (Iced Coffee),,True,False
+11,11,11,Badam Milk Recipe (Creamy Indian Almond Drink),,True,False
+12,12,12,Poha,,True,False
+13,13,13,Perfect Upma,,True,False
+14,14,14,Aloo Paratha,,True,False
+15,15,15,Chilli Paneer Paratha,,True,False
+16,16,16,Chicken Chettinad Gravy Recipe,,True,False
+17,17,17,Vegetable Sandwich,,True,False
+18,18,18,Indian Egg Bhurji,,True,False
+19,19,19,Plain Omelette,,True,False
+20,20,20,Masala Omelette,,True,False
+21,21,21,Rava Kesari,,True,False
+22,22,22,Brioche French Toast,,True,False
+23,23,23,Classic Pancakes,,True,False
+24,24,24,Upgraded Oats Porridge,,True,False
+25,25,25,Vegetable Oats Upma,,True,False
+26,26,26,16 Beetroot Recipes from Indian Cuisine,,True,False
+27,27,27,Sabudana Khichdi,,True,False
+28,28,28,Poori Bhaji,,True,False
+29,29,29,Chole Bhature Breakfast Plate,,True,False
+30,30,30,Egg Fried Rice Breakfast,,True,False
+31,31,31,Banana Smoothie Bowl,,True,False
+32,32,32,Vegetable Poha Cutlets,,True,False
+33,33,33,Bread Pakora,,True,False
+34,34,34,Stuffed Cheese Garlic Bread,,True,False
+35,35,35,Sprouts Salad Bowl,,True,False
+36,36,36,High-Protein Chocolate Peanut Butter Breakfast Parfait,,True,False
+37,37,37,Blue Raspberry Smoothie Bowl,,True,False
+38,38,38,Mango Smoothie Bowl,,True,False
+39,39,39,Besan Chilla,,True,False
+40,40,40,Moong Dal Chilla,,True,False
+41,41,41,Rava Idli,,True,False
+42,42,42,Instant Set Dosa,,True,False
+43,43,43,Neer Dosa,,True,False
+44,44,44,Andhra Special Pesarattu,,True,False
+45,45,45,Onion Uttapam,,True,False
+46,46,46,Uttapam - Mixed Veg,,True,False
+47,47,47,Eggless Banana Muffins,,True,False
+48,48,48,Veggie Egg Muffins,,True,False
+49,49,49,Breakfast Burrito - Veg,,True,False
+50,50,50,Simple Breakfast Burrito - Egg and Sausage,,True,False
+51,51,51,Amazing Creamy Avocado Toast,,True,False
+52,52,52,Tomato Cheese Toast,,True,False
+53,53,53,Crispy Fried Chicken Sandwich With Honey-Sriracha Sauce on a Brioche Bun,,True,False
+54,54,54,Creamy Egg Salad Sandwich,,True,False
+55,55,55,Homemade Granola,,True,False
+56,56,56,Paneer Bhurji,,True,False
+57,57,57,Stuffed Capsicum Omelette,,True,False
+58,58,58,Masala Maggi Breakfast,,True,False
+59,59,59,Thalipeeth,,True,False
+60,60,60,Travel Friendly Methi Thepla,,True,False
+61,61,61,Masala Cornflakes Mix,,True,False
+62,62,62,Vegetable Sevai Upma,,True,False
+63,63,63,Idiyappam with Hotel Style Vegetable Kurma,,True,False
+64,64,64,Appam with Vegetable Stew,,True,False
+65,65,65,Instant Ragi Dosa,,True,False
+66,66,66,Ragi Idli,,True,False
+67,67,67,Millet Upma,,True,False
+68,68,68,Korra Pongal,,True,False
+69,69,69,Ven Pongal,,True,False
+70,70,70,Sweet Pongal,,True,False
+71,71,71,Dal Khichdi,,True,False
+72,72,72,Masala Sabudana Vada,,True,False
+73,73,73,Egg Cheese Toast,,True,False
+74,74,74,Cheesy Scrambled Eggs,,True,False
+75,75,75,Aloo Gobi Recipe,,True,False
+76,76,76,Baingan Bharta Recipe (Eggplant Bharta),,True,False
+77,77,77,Bhindi Fry Recipe | Okra Stir Fry,,True,False
+78,78,78,Stuffed Capsicum | Stuffed Bell Peppers Recipe,,True,False
+79,79,79,Veg Burger Recipe (Veggie Burger),,True,False
+80,80,80,Navratan Korma Recipe (Navratan Curry),,True,False
+81,81,81,Veg Biryani,,True,False
+82,82,82,Chicken Biryani,,True,False
+83,83,83,Chana Masala Recipe (Chickpea Masala),,True,False
+84,84,84,Paneer Butter Masala,,True,False
+85,85,85,Dal Tadka,,True,False
+86,86,86,Rajma Chawal,,True,False
+87,87,87,Chole Bhature,,True,False
+88,88,88,Jeera Rice with Dal Fry,,True,False
+89,89,89,Lemon Rice,,True,False
+90,90,90,Thecha Curd Rice,,True,False
+91,91,91,Veg Pulao,,True,False
+92,92,92,Mushroom Masala,,True,False
+93,93,93,Kadai Paneer,,True,False
+94,94,94,Palak Paneer,,True,False
+95,95,95,Aloo Gobi,,True,False
+96,96,96,Restaurant Style Mix Veg Curry,,True,False
+97,97,97,Butter Chicken,,True,False
+98,98,98,Rohu Fish Curry,,True,False
+99,99,99,Egg Curry (Dhaba Style),,True,False
+100,100,100,Chicken Maharani Curry,,True,False
+101,101,101,Malai Kofta,,True,False
+102,102,102,Bhindi Masala,,True,False
+103,103,103,Baingan Bharta,,True,False
+104,104,104,Matar Paneer,,True,False
+105,105,105,Chicken Korma,,True,False
+106,106,106,Veg Fried Rice,,True,False
+107,107,107,Easy & Healthy Chicken Fried Rice,,True,False
+108,108,108,Better Than Takeout Egg Fried Rice,,True,False
+109,109,109,Veg Hakka Noodles,,True,False
+110,110,110,Rajma Recipe | Rajma Masala | Rajma Chawal,,True,False
+111,111,111,Sambar Rice,,True,False
+112,112,112,One Pot Rasam Rice,,True,False
+113,113,113,Tomato Rice,,True,False
+114,114,114,Authentic Coconut Rice,,True,False
+115,115,115,Veg Thali,,True,False
+116,116,116,Dal Makhani Recipe (Restaurant Style),,True,False
+117,117,117,South Indian Lunch Thali,,True,False
+118,118,118,North Indian Thali,,True,False
+119,119,119,Paneer Pulao,,True,False
+120,120,120,Matar Pulao,,True,False
+121,121,121,Dal Tadka Recipe,,True,False
+122,122,122,Hyderabadi Veg Dum Biryani,,True,False
+123,123,123,Hyderabadi Chicken Biryani,,True,False
+124,124,124,Perfect Mutton Curry,,True,False
+125,125,125,One Pot Dal Curry with Steamed Rice,,True,False
+126,126,126,Vegetable Masala Khichdi,,True,False
+127,127,127,Masala Khichdi,,True,False
+128,128,128,Veg Kurma with Chapati,,True,False
+129,129,129,Paneer Bhurji Recipe,,True,False
+130,130,130,Bottle Gourd Kofta Curry,,True,False
+131,131,131,Paneer Bhurji with Roti,,True,False
+132,132,132,Chicken 65 with Rice,,True,False
+133,133,133,Veg Manchurian with Fried Rice,,True,False
+134,134,134,Gobi Manchurian,,True,False
+135,135,135,Paneer Manchurian,,True,False
+136,136,136,Veg Schezwan Fried Rice,,True,False
+137,137,137,Paneer Pasanda with Butter Naan,,True,False
+138,138,138,Chicken Chettinad,,True,False
+139,139,139,Kasuri Methi Malai Chicken,,True,False
+140,140,140,Navratan Korma,,True,False
+141,141,141,Kashmiri Dum Aloo,,True,False
+142,142,142,Achari Paneer Masala,,True,False
+143,143,143,Pepper Chicken Dry,,True,False
+144,144,144,Kottayam Style Fish Curry,,True,False
+145,145,145,Goan Prawn Curry,,True,False
+146,146,146,Matar Paneer Recipe (Mutter Paneer),,True,False
+147,147,147,Awadhi Chicken Korma,,True,False
+148,148,148,Dal Palak,,True,False
+149,149,149,Tandoori Paneer Tikka,,True,False
+150,150,150,Malabar Chicken Curry,,True,False
+151,151,151,Chicken Do Pyaza,,True,False
+152,152,152,Egg Masala with Chapati,,True,False
+153,153,153,Veg Jaipuri,,True,False
+154,154,154,Masala Bhindi Fry,,True,False
+155,155,155,Dhabha Style Paneer Do Pyaza,,True,False
+156,156,156,Palak Corn (Spinach Corn Curry),,True,False
+157,157,157,Stuffed Baingan Curry,,True,False
+158,158,158,Veg Kolhapuri,,True,False
+159,159,159,Handi Chicken,,True,False
+160,160,160,Paneer Lababdar,,True,False
+161,161,161,Ragda Pattice,,True,False
+162,162,162,Chicken Kali Mirch,,True,False
+163,163,163,Mushroom Pepper Fry,,True,False
+164,164,164,Punjabi Style Rajma Masala,,True,False
+165,165,165,Chole with Lachha Paratha,,True,False
+166,166,166,Malai Kofta Recipe (Paneer Kofta),,True,False
+167,167,167,Veg Makhanwala,,True,False
+168,168,168,Paneer Angara,,True,False
+169,169,169,Chicken Angara,,True,False
+170,170,170,Butter Chicken Recipe (Indian Chicken Makhani),,True,False
+171,171,171,Corn Palak Sabzi,,True,False
+172,172,172,Egg Bhurji with Phulka,,True,False
+173,173,173,Veg Hyderabadi Curry,,True,False
+174,174,174,Paneer Mughlai,,True,False
+175,175,175,Chicken Mughlai,,True,False
+176,176,176,Dal Makhani Dinner Special,,True,False
+177,177,177,Veg Achari,,True,False
+178,178,178,Tawa Paneer,,True,False
+179,179,179,Chicken Rezala,,True,False
+180,180,180,Matar Mushroom Masala,,True,False
+181,181,181,Corn Palak,,True,False
+182,182,182,Paneer Shahi Korma,,True,False
+183,183,183,Shahi Chicken Korma,,True,False
+184,184,184,Deewani Handi,,True,False
+185,185,185,Egg Butter Masala,,True,False
+186,186,186,Paneer Butter Pepper Fry,,True,False
+187,187,187,Chicken Butter Pepper Fry,,True,False
+188,188,188,Vegetable Dum Biryani,,True,False
+189,189,189,Veg Frankie Roll,,True,False
+190,190,190,Chicken Dum Biryani,,True,False
+191,191,191,Bihari Chicken Bhuna Masala,,True,False
+192,192,192,Veg Gassi with Rice,,True,False
+193,193,193,Kori Gassi,,True,False
+194,194,194,Masala Samosa,,True,False
+195,195,195,Ruhi Style Soft Paneer Pakora,,True,False
+196,196,196,Onion Pakoda,,True,False
+197,197,197,Aloo Bonda,,True,False
+198,198,198,Bread Pakora Stuffed,,True,False
+199,199,199,Vegetable Cutlet,,True,False
+200,200,200,Hara Bhara Kebab,,True,False
+201,201,201,Cheese Corn Balls,,True,False
+202,202,202,Veg Spring Rolls,,True,False
+203,203,203,Paneer Tikka Skewers,,True,False
+204,204,204,Tandoori Aloo,,True,False
+205,205,205,Dahi Puri,,True,False
+206,206,206,Sev Puri Dip,,True,False
+207,207,207,Bhel Puri,,True,False
+208,208,208,Pav Bhaji Snack Platter,,True,False
+209,209,209,Vada Pav,,True,False
+210,210,210,Misal Pav Snack Bowl,,True,False
+211,211,211,Masala French Fries,,True,False
+212,212,212,Peri Peri Fries,,True,False
+213,213,213,Cheesy Garlic Bread,,True,False
+214,214,214,Chilli Cheese Toast,,True,False
+215,215,215,Veg Cheese Sandwich Grill,,True,False
+216,216,216,Paneer Biryani Recipe (Easy Dum Method),,True,False
+217,217,217,Paneer Sandwich Toasted,,True,False
+218,218,218,Bombay Masala Toast Sandwich,,True,False
+219,219,219,Potato Smiley Snack,,True,False
+220,220,220,Aloo Tikki Chaat,,True,False
+221,221,221,Dahi Aloo Tikki,,True,False
+222,222,222,Soya Chaap Tikka,,True,False
+223,223,223,Crispy Corn Pepper Fry,,True,False
+224,224,224,Cheesy Vegetable Nachos,,True,False
+225,225,225,Masala Peanuts,,True,False
+226,226,226,Roasted Chana Snack Mix,,True,False
+227,227,227,Instant Poha Chivda,,True,False
+228,228,228,Crispy Murukku,,True,False
+229,229,229,Thattai Crisps,,True,False
+230,230,230,Masala Boiled Egg Chaat,,True,False
+231,231,231,Ribbon Pakoda,,True,False
+232,232,232,Medu Vada Snack,,True,False
+233,233,233,Leftover Fried Idli Snack,,True,False
+234,234,234,Schezwan Idli Fry,,True,False
+235,235,235,Mini Rava Uttapam Bites,,True,False
+236,236,236,Instant Rava Dhokla,,True,False
+237,237,237,Khaman Dhokla,,True,False
+238,238,238,Handvo Slices,,True,False
+239,239,239,Kothimbir Vadi,,True,False
+240,240,240,Sabudana Vada,,True,False
+241,241,241,Sabudana Tikki,,True,False
+242,242,242,Moong Dal Chilla Roll,,True,False
+243,243,243,Besan Chilla Stuffed Roll,,True,False
+244,244,244,Paneer Puff,,True,False
+245,245,245,Veg Puff,,True,False
+246,246,246,Bakery Style Egg Puff,,True,False
+247,247,247,Cheesy Chicken Puffs,,True,False
+248,248,248,Chicken Popcorn Bites,,True,False
+249,249,249,Zero Oil Fish Finger Snack,,True,False
+250,250,250,Andaa Bhurji Pav,,True,False
+251,251,251,Cucumber Curd Sandwich,,True,False
+252,252,252,Veg Mayo Sandwich,,True,False
+253,253,253,Paneer Corn Sandwich,,True,False
+254,254,254,Simple Stuffed Paratha Roll Snack,,True,False
+255,255,255,Paneer Kathi Roll Snack,,True,False
+256,256,256,Chicken Tikka Masala Recipe,,True,False
+257,257,257,Ring Samosa Chaat,,True,False
+258,258,258,Papdi Chaat,,True,False
+259,259,259,Masala Sweet Corn Cup,,True,False
+260,260,260,Sprouts Chaat Bowl,,True,False
+261,261,261,Fruit Chaat Snack,,True,False
+262,262,262,Chicken Korma Recipe,,True,False
+263,263,263,Chicken 65 Recipe,,True,False
+264,264,264,Chicken Fry Recipe (Andhra Kodi Vepudu),,True,False
+265,265,265,Chicken Curry Recipe,,True,False
+266,266,266,Pepper Chicken Recipe,,True,False
+267,267,267,Masala Chai Recipe (Authentic Indian Spiced Milk Tea),,True,False
+268,268,268,Irani Chai Recipe (Cafe Style Irani Tea),,True,False
+269,269,269,Turmeric Milk | Golden Milk (Haldi Doodh),,True,False
+270,270,270,Lemon Cake Recipe (With Lemon Drizzle),,True,False
+271,271,271,Iced Tea Recipe | Lemon Iced Tea,,True,False
+272,272,272,Watermelon Juice Recipe + How to Cut Watermelon,,True,False
+273,273,273,Orange Juice Recipe (Easy and Homemade),,True,False
+274,274,274,Pineapple Juice Recipe (Using Blender),,True,False
+275,275,275,Wood Apple Juice | Wood Apple Recipe,,True,False
+276,276,276,Fresh Pomegranate Juice (Anar Juice),,True,False
+277,277,277,Mango Lassi Recipe,,True,False
+278,278,278,Diwali Sweets | Traditional & Modern Recipes 2025,,True,False
+279,279,279,Paneer Butter Masala Recipe,,True,False
+280,280,280,Rose Milkshake | Rose Milk,,True,False
+281,281,281,Thandai Recipe (Traditional Holi Drink),,True,False
+282,282,282,Aam Panna Recipe – With Boiled and Roasted Mangoes,,True,False
+283,283,283,Jaljeera Recipe | Jaljeera Benefits,,True,False
+284,284,284,Nimbu Pani | Shikanji (Indian Lemonade),,True,False
+285,285,285,Green Tea Recipe,,True,False
+286,286,286,Coffee Milkshake (With Ice Cream),,True,False
+287,287,287,Strawberry Milkshake Recipe: Classic & Plant Based,,True,False
+288,288,288,Chocolate Milkshake Recipe | Chocolate Shake,,True,False
+289,289,289,Banana Milkshake Recipe | Wholesome Banana Shake,,True,False
+290,290,290,Kulfi Falooda,,True,False
+291,291,291,Aloo Kofta Recipe (Potato Kofta Curry),,True,False
+292,292,292,Potato Curry Recipe (Indian Aloo Curry),,True,False
+293,293,293,Egg Curry Recipe,,True,False
+294,294,294,Paneer Lababdar (Restaurant Style Recipe),,True,False
+295,295,295,Baby Corn Jalfrezi,,True,False
+296,296,296,Paneer Do Pyaza Recipe (Restaurant Style),,True,False
+297,297,297,Bharli Bhendi,,True,False
+298,298,298,Jeera Rice Recipe (Jeera Pulao),,True,False
+299,299,299,Kadhi Recipe | Punjabi Kadhi Pakora,,True,False
+300,300,300,Kerala Sambar,,True,False
+301,301,301,Tomato Pappu (Classic Andhra Dal With Tomatoes),,True,False
+302,302,302,Lauki Chana Dal,,True,False
+303,303,303,Egg Masala Gravy Recipe,,True,False
+304,304,304,Drumstick Sambar (Murungakkai Sambar),,True,False
+305,305,305,Kootu Curry | Koottukari Recipe,,True,False
+306,306,306,Beetroot Poriyal,,True,False
+307,307,307,Cabbage Poriyal,,True,False
+308,308,308,Beans Thoran Recipe,,True,False
+309,309,309,Mor Kulambu Recipe | Easy Mor Kuzhambu,,True,False
+310,310,310,Vatha Kulambu | Vatha Kuzhambu | Manathakkali Vathal Kulambu,,True,False
+311,311,311,Meal Maker Curry Recipe | Soya Chunks Curry,,True,False
+312,312,312,Karela Fry | Bitter Gourd Fry | Kakarakaya Fry,,True,False
+313,313,313,Dum Aloo Recipe (Mughlai Style),,True,False
+314,314,314,Aloo Bhindi Recipe (Punjabi Style),,True,False
+315,315,315,Methi Matar Malai Recipe,,True,False
+316,316,316,Kofta Recipe | Veg Kofta Curry,,True,False
+317,317,317,Sabji Masala – How to Make And Use,,True,False
+318,318,318,Navratri Recipes | 84 Navratri Fast Recipes,,True,False
+319,319,319,Bhindi Do Pyaza Recipe (Punjabi Style),,True,False
+320,320,320,Egg Bhurji Recipe (Indian Anda Bhurji),,True,False
+321,321,321,Ladies Finger Fry (Vegan),,True,False
+322,322,322,Veg Puff Recipe | Indian Curry Puff,,True,False
+323,323,323,Gucchi Mushroom (Morel Mushroom) – About & Pulao Recipe,,True,False
+324,324,324,Fish Curry Recipe (Fish Masala),,True,False
+325,325,325,Pudina Rice Recipe | Spicy Pudina Pulao (Mint Rice),,True,False
+326,326,326,Bagara Baingan (Eggplant Curry For Biryani),,True,False
+327,327,327,Bisi Bele Bath Recipe (Karnataka Style),,True,False
+328,328,328,Tamarind Rice | Puliyodharai Recipe,,True,False
+329,329,329,Tomato Rice Recipe (South Indian Thakkali Sadam),,True,False
+330,330,330,Capsicum Rice Recipe (Indian Bell Pepper Rice),,True,False
+331,331,331,25 Delicious Millet Recipes to Try Today,,True,False
+332,332,332,Dalia Recipe | Daliya Khichdi,,True,False
+333,333,333,Maharashtrian Batata Poha (Aloo Poha),,True,False
+334,334,334,Oats Upma Recipe (Indian Savory Oats),,True,False
+335,335,335,Palak Rice Recipe (Indian Spinach Rice),,True,False
+336,336,336,Carrot Rice Recipe (Easy & Healthy),,True,False
+337,337,337,Tomato Bath (Karnataka Style),,True,False
+338,338,338,Shavige Uppittu Recipe (Rice Vermicelli Upma),,True,False
+339,339,339,Idiyappam Recipe | Nool Puttu (String Hoppers),,True,False
+340,340,340,Sprouts Curry | How To Make Mixed Sprouts Curry,,True,False
+341,341,341,Masala Puri Recipe (Bangalore Style Chaat),,True,False
+342,342,342,Kadala Curry Recipe (Kerala Style),,True,False
+343,343,343,Lobia Recipe | Lobia Masala (Curried Black Eyed Beans),,True,False
+344,344,344,Veg Handi,,True,False
+345,345,345,Mushroom Do Pyaza (Mushrooms with Onions),,True,False
+346,346,346,Amritsari Fish Recipe (Tawa Fish Fry),,True,False
+347,347,347,Soya Keema Recipe (With Soya Granules),,True,False
+348,348,348,Prawn Curry (Prawn Masala),,True,False
+349,349,349,Diwali Snacks Recipes | Diwali Food Ideas 2025,,True,False
+350,350,350,Chole Bhature | Chana Bhatura,,True,False
+351,351,351,Chana Masala Recipe (Easy North Indian Style),,True,False
+352,352,352,Masala Uttapam | Sandwich Uttapam (Street Style),,True,False
+353,353,353,Cauliflower Kurma Recipe (South Indian Style),,True,False
+354,354,354,12 Bottle gourd recipes | lauki recipes | dudhi recipes | sorakaya recipes,,True,False
+355,355,355,Palak Saag | Spinach Saag,,True,False
+356,356,356,Parwal ki Sabji | Easy Aloo Parwal Recipe,,True,False
+357,357,357,Paneer Butter Masala | How to make Paneer Butter Masala Recipe,,True,False
+358,358,358,Kadai Paneer Recipe | Shahi Paneer Recipe | How to make Kadai Paneer Gravy Recipe | Homemade Kadai Paneer Recipe,,True,False
+359,359,359,Palak paneer | How to Make Palak Paneer | Punjabi Style Palak Paneer | Restaurant Style Palak Paneer,,True,False
+360,360,360,Chicken Malai Kofta | Shahi Chicken Kofta recipe | How to make Malai Chicken Kofta Curry,,True,False
+361,361,361,Tea Shop Style Onion Bonda | Onion Bonda Recipe,,True,False
+362,362,362,Prawn biryani | Shrimp biryani,,True,False
+363,363,363,Kaju Mushroom Masala | Mushroom Masala | How to make Kaju Mushroom Masala Recipe,,True,False
+364,364,364,Mutton Curry | Mutton Masala Gravy,,True,False
+365,365,365,Mutton Korma (Goat Korma),,True,False
+366,366,366,Mutton Kabab Recipe | Mutton Keema Kabab Recipe,,True,False
+367,367,367,Aloo Gobi Parota | Gobi Paratha | Punjabi Gobi ka Paratha | Potato Cauliflower Stuffed Paratha,,True,False
+368,368,368,Bhindi do Pyaza | Okra Onion Curry | Easy Bhindi do Pyaza Recipe with Video | How to Make Bhindi do Pyaz,,True,False
+369,369,369,Mutton Fry | Mutton Sukka | Mutton Roast,,True,False
+370,370,370,Rogan Josh Recipe (Lamb Rogan Josh),,True,False
+371,371,371,Tandoori Chicken Recipe (Smoky Restaurant Style),,True,False
+372,372,372,South Indian Wedding-Style Chole Masala | Chole Masala Recipe,,True,False
+373,373,373,Chicken kebab recipe | Chicken kabab recipe,,True,False
+374,374,374,Pudina Dal Tadka | Mint Dal How to Make Pudina Dal with tips,,True,False
+375,375,375,Punjabi Dabha Style Paneer Bhurji | How to Make Paneer Bhurji,,True,False
+376,376,376,Chicken Seekh Kabab,,True,False
+377,377,377,Tangdi kabab recipe (Restaurant style tangri kabab),,True,False
+378,378,378,Butter Chicken Recipe | Murgh Makhani | How to make Chicken Makhani,,True,False
+379,379,379,"Paneer Tikka Recipe in Oven, Air Fryer, Stovetop",,True,False
+380,380,380,Tandoori Mushroom Tikka,,True,False
+381,381,381,Restaurant Style Shahi Chicken Korma Recipe | Shahi Chicken Korma Recipe,,True,False
+382,382,382,Schzewan Fried Chicken | How to make Schzewan Fried Chicken Recipe | Szechuan Chicken,,True,False
+383,383,383,Pepper Chicken Fry | Dry Pepper Chicken Fry | How to make Chicken Fry,,True,False
+384,384,384,Tomato Chicken | Thick Gravy Chicken Curry | How to make Spicy Tomato Chicken Curry with Thick gravy,,True,False
+385,385,385,Tandoori Fish Tikka,,True,False
+386,386,386,Telangana Style Masala Egg Curry | Egg Gravy Recipe | Thick Masala Egg Gravy Recipe,,True,False
+387,387,387,Ridged Gourd Scrambled Eggs | Turai Egg Bhurji Masala | Beerakaya Egg Burji | Peerkangai Muttai Poriyal Recipe,,True,False
+388,388,388,Chettinad Fish Stew | South Indian Chettinad Fish Gravy | How to make Chettinad Fish Curry,,True,False
+389,389,389,Boneless Fish Fry | Amritsari Fish Fry | Ajwain Fish Fry recipe | How to Make Boneless Fish Fry,,True,False
+390,390,390,Spicy Tomato Prawns Curry Recipe | Prawns Tomato Curry Recipe,,True,False
+391,391,391,Veg Fried Rice Recipe (Vegetable Fried Rice),,True,False
+392,392,392,Spicy Mutton Fry | Andhra Style Spicy Mutton Fry | Rayalaseema Style Mutton Fry | How to make Spicy Mutton Fry,,True,False
+393,393,393,Egg fried rice,,True,False
+394,394,394,Rava Idli (Easy and No Fermentation),,True,False
+395,395,395,Chicken Fried Rice Recipe,,True,False
+396,396,396,Veg Noodles Recipe (Vegetable Noodles),,True,False
+397,397,397,Chicken Noodles Recipe,,True,False
+398,398,398,Veg Manchurian Recipe with Manchurian Sauce,,True,False
+399,399,399,Mysore Masala Dosa Recipe (With Red Chutney),,True,False
+400,400,400,Idli Sambar Recipe | How to make Tiffin Sambar,,True,False
+401,401,401,Paneer Dosa Recipe (Street Style),,True,False
+402,402,402,Set Dosa | Soft Sponge Dosa Recipe,,True,False
+403,403,403,Rava Dosa Recipe,,True,False
+404,404,404,Kanchipuram Idli | Kovil Idli,,True,False
+405,405,405,Chicken manchurian recipe,,True,False
+406,406,406,Gobi Manchurian Recipe | Cauliflower Manchurian,,True,False
+407,407,407,Medu Vada Recipe,,True,False
+408,408,408,Ven Pongal Recipe | Khara Pongal | Ghee Pongal,,True,False
+409,409,409,Kothu Parotta | Kothu Roti,,True,False
+410,410,410,Fried Idli | Idli Fry (Mumbai Style),,True,False
+411,411,411,Onion Uttapam (With Homemade Batter),,True,False
+412,412,412,Uttapam Recipe | How To Make Uthappam,,True,False
+413,413,413,Pesarattu Recipe | Andhra Style Moong Dal Dosa,,True,False
+414,414,414,Coconut Burfi (Nariyal Barfi),,True,False
+415,415,415,Sweet Pongal | Festive Sakkarai Pongal | Chakkara Pongal,,True,False
+416,416,416,"Sambar Recipe, How to Make Sambar",,True,False
+417,417,417,Kadala Curry Recipe,,True,False
+418,418,418,Poha Recipe (Kanda Poha),,True,False
+419,419,419,Indori Poha,,True,False
+420,420,420,Tomato Upma,,True,False
+421,421,421,Bread Upma (Quick and Easy),,True,False
+422,422,422,Milk Dalia (Indian Cracked Wheat Porridge),,True,False
+423,423,423,Oats Porridge Recipe | Oatmeal Porridge,,True,False
+424,424,424,Ragi Dosa Recipe | Nachni Dosa,,True,False
+425,425,425,Ragi Idli Recipe,,True,False
+426,426,426,Ragi Malt | Healthy Ragi Java | Ragi Porridge,,True,False
+427,427,427,Sabudana Khichdi Recipe,,True,False
+428,428,428,Sabudana Vada Recipe (For Fasting),,True,False
+429,429,429,Aloo Palak Paratha,,True,False
+430,430,430,Paneer Paratha Recipe (Punjabi Style),,True,False
+431,431,431,Aloo Gobi Paratha,,True,False
+432,432,432,Methi Paratha Recipe (Punjabi Methi ke Parathe),,True,False
+433,433,433,Onion Paratha (Stuffed Onion Flatbread),,True,False
+434,434,434,Cheese Paratha (Cheese Stuffed Flatbread),,True,False
+435,435,435,Baingan Bharta Recipe (Smoky Indian Mashed Eggplant),,True,False
+436,436,436,Paneer Bhurji Recipe (Spiced Scrambled Cottage Cheese),,True,False
+437,437,437,Tomato Omelette Recipe,,True,False
+438,438,438,27 Sandwich Recipes (Vegetarian),,True,False
+439,439,439,Pinwheel Sandwich Recipe,,True,False
+440,440,440,Paneer Sandwich Recipe (2 Versions),,True,False
+441,441,441,Avocado Shake Recipe,,True,False
+442,442,442,Bread Pakora Recipe (Stuffed Bread Pakoda),,True,False
+443,443,443,Batata Vada Recipe | Maharashtrian Style Aloo Vada,,True,False
+444,444,444,Misal Pav (Misal Recipe),,True,False
+445,445,445,Puri Bhaji | Batata Bhaji,,True,False
+446,446,446,Khaman Dhokla Recipe (Instant Gujarati Khaman),,True,False
+447,447,447,Poha Cutlet Recipe,,True,False
+448,448,448,Thalipeeth Recipe,,True,False
+449,449,449,Thepla Recipe (Multigrain Methi Thepla),,True,False
+450,450,450,Chia Pudding Recipe (Easy & Healthy),,True,False
+451,451,451,Lassi Recipe (Indian Yogurt Drink),,True,False
+452,452,452,Mango Smoothie Recipe (5 Healthy Variations),,True,False
+453,453,453,Blueberry Smoothie Recipe (Easy & Healthy),,True,False
+454,454,454,Dal Vada | Masala Vada | Parippu Vada,,True,False
+455,455,455,Onion Samosa (Patti Samosa),,True,False
+456,456,456,Samosa Recipe (Better Than Takeout),,True,False
+457,457,457,Vada Pav Recipe | How to make Mumbai Vada Pav,,True,False
+458,458,458,Paneer Pakora Recipe,,True,False
+459,459,459,Mirchi Bajji Recipe | Chilli Bajji | Mirapakaya Bajji,,True,False
+460,460,460,Aloo Bonda Recipe (Potato Bonda),,True,False
+461,461,461,Gobi 65 Recipe | Fried Cauliflower Snack,,True,False
+462,462,462,Paneer 65 Recipe,,True,False
+463,463,463,Veg Cutlet Recipe | Mix Vegetable Cutlet,,True,False
+464,464,464,Hara Bhara Kabab Recipe (Pan-fried & Baked),,True,False
+465,465,465,Cheese Pakora,,True,False
+466,466,466,Methi Pakoda | Methi Bhajiya | Methi Pakora,,True,False
+467,467,467,Moong Dal Pakoda | Moong Dal Vada | Moong Dal Bhajiya,,True,False
+468,468,468,Puri For Pani Puri | Suji Ke Golgappe,,True,False
+469,469,469,Dahi Puri Recipe (Street Style),,True,False
+470,470,470,Sev Puri (Indian Chaat Snack),,True,False
+471,471,471,Bhel Puri Recipe (Mumbai Style Bhel),,True,False
+472,472,472,Ragda Patties Recipe (Mumbai Style Ragda Pattice),,True,False
+473,473,473,Dahi Papdi Chaat,,True,False
+474,474,474,Samosa Chaat Recipe,,True,False
+475,475,475,Aloo Chaat Recipe (Street Style),,True,False
+476,476,476,Papdi Chaat Recipe (Delhi Style Papri Chaat),,True,False
+477,477,477,Masala Papad Recipe,,True,False
+478,478,478,Corn Chaat Recipe | Sweet Corn Chaat,,True,False
+479,479,479,Sprouts Chaat,,True,False
+480,480,480,Fruit Chaat Recipe (Delhi Street Style),,True,False
+481,481,481,Dahi Bhalla Recipe,,True,False
+482,482,482,Chawli Usal,,True,False
+483,483,483,Pav Recipe | Ladi Pav | Pav Bread,,True,False
+484,484,484,Spring Rolls | Crispy Veg Spring Roll Recipe,,True,False
+485,485,485,Schezwan Paneer,,True,False
+486,486,486,Eggless Mayonnaise Recipe | Veg Mayonnaise,,True,False
+487,487,487,Paneer Kathi Roll Recipe (Paneer Wrap),,True,False
+488,488,488,Vegetable Au Gratin Recipe,,True,False
+489,489,489,Tawa Sandwich (Griddle Sandwich),,True,False
+490,490,490,"Homemade Pizza Sauce Recipe (No Cans, No Preservatives)",,True,False
+491,491,491,Masala Pav,,True,False
+492,492,492,Onion Chutney Recipe (Tamil Nadu Style),,True,False
+493,493,493,Idli Manchurian,,True,False
+494,494,494,Idli Recipe & Idli Batter – Tips That Actually Work,,True,False
+495,495,495,Tomato Rasam (Thakkali Rasam),,True,False
+496,496,496,Thayir Vadai | Curd Vada,,True,False
+497,497,497,Mysore Bonda Recipe | Mysore Bajji,,True,False
+498,498,498,Punugulu Recipe (Punukulu),,True,False
+499,499,499,Goli Baje | Mangalore Bajji | Mangalore Bonda,,True,False
+500,500,500,Chakli Recipe (Instant & Easy),,True,False
+501,501,501,Butter Murukku | Butter Chakli,,True,False
+502,502,502,Mathri Recipe (Punjabi Mathiya or Mathari),,True,False
+503,503,503,Namak Para Recipe | Namak Pare (Salty Diamond Cuts),,True,False
+504,504,504,Brinjal Curry Recipe (Baingan Masala),,True,False
+505,505,505,Sabudana Chivda Recipe | Sabudana Namkeen Recipe | Sabudana Snacks,,True,False
+506,506,506,Chivda Recipe | Poha Chivda | Namkeen Recipe,,True,False
+507,507,507,Jhal Muri Recipe | Kolkata Style Jhalmuri Snack,,True,False
+508,508,508,Baby Corn Sabji,,True,False
+509,509,509,Cheese Balls Recipe (Indian Style),,True,False

@@ -36,13 +36,16 @@ recipe_pipeline/
 ├── src/
 │   ├── main.py               # Pipeline orchestrator & final sanitation
 │   ├── ingredient_parser.py  # Regex & Logic for ingredient extraction
-│   ├── instruction_cleaner.py# Heuristics for instruction filtering
+│   ├── instruction_cleaner.py# Heuristics for instruction filtering & cleaning
 │   ├── unit_normalizer.py    # Unit conversion (g, ml, tsp, etc.)
+│   ├── text_utils.py         # Number & fraction to word conversion
 │   ├── time_normalizer.py    # Time extraction and calculation
 │   ├── standard_ingredients.py # Reference list for fuzzy matching
 │   ├── db.py                 # PostgreSQL connection setup
 │   ├── db_insert.py          # Database insertion helpers
+│   ├── export_evidence.py    # DB to CSV export utility
 │   └── test_refinement.py    # Unit tests for parsing logic
+
 ├── sql/
 │   └── schema.sql            # Database schema (DDL)
 ├── README.md                 # Project documentation
@@ -60,8 +63,11 @@ The pipeline follows these distinct stages:
    - Orchestrates the processing of each recipe record.
 
 2. **Cleaning & Filtering**
-   - **Instruction Filtering**: Uses heuristics to detect and skip lines in the ingredient list that are actually instructions (e.g., starting with "add", "mix", "pour").
-    - **Sanitation**: Removes noise like "can be scaled", trailing dots (`.`), leading symbols (`/`, `-`, `,`), articles (`a`, `an`, `the`), and filler words.
+   - **Instruction Filtering & Cleaning**: Uses heuristics to detect and skip lines in the ingredient list that are actually instructions. 
+   - **Instruction Enrichment**: Cleans raw instructions by removing noisy symbols (e.g., `▢`), standardizing measurements to `ml` or `g`, and converting numeric quantities to English words (e.g., "15 ml" -> "fifteen ml").
+   - **Step Collection**: Aggregates steps from `prep_steps`, `cook_steps`, and `quick_steps` to ensure comprehensive instructional coverage.
+   - **Sanitation**: Removes noise like "can be scaled", trailing dots (`.`), leading symbols (`/`, `-`, `,`), articles (`a`, `an`, `the`), and filler words.
+
 
 3. **Parsing**
    - **Regex Extraction**: Separates quantity, unit, and ingredient name.
@@ -164,11 +170,18 @@ Execute the main script to process the data and populate the database:
 python src/main.py
 ```
 
-### Step 5: Verify results (Optional)
+### Step 5: Export Evidence
+To refresh the CSV files in `output_evidence/` with the latest cleaned data from the database, run:
+```bash
+python src/export_evidence.py
+```
+
+### Step 6: Verify results (Optional)
 Run the refinement tests to ensure parsing logic is performing as expected:
 ```bash
 python src/test_refinement.py
 ```
+
 
 ---
 

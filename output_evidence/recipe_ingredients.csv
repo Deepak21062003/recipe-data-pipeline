@@ -1,0 +1,101 @@
+"id","recipe_id","ingredient_name","ingredient_info","grocery_mapping","is_optional","order_index"
+1,1,"oil","{""unit_conversion"": ""1.0 tbsp → 15.0 ml""}",NULL,False,0
+2,1,"turmeric","{""unit_conversion"": ""0.25 tsp → 1.25 g (approx)""}",NULL,False,1
+3,1,"salt","{""unit_conversion"": ""0.5 tsp → 2.5 g (approx)""}",NULL,True,2
+4,1,"coriander","{""preparation"": [""chopped"", ""fine""], ""unit_conversion"": ""0.25 cup → 60.0 g (approx)""}",NULL,False,3
+5,1,"clove","{""unit_conversion"": ""4.0 x clove (~0.1g) → 0.4 g""}",NULL,False,4
+6,1,"strand mace","{""unit_conversion"": ""no conversion applied""}",NULL,False,5
+7,1,"white sesame seeds","{""unit_conversion"": ""1.0 tbsp → 15.0 g (approx)""}",NULL,False,6
+8,1,"cinnamon","{""unit_conversion"": ""no conversion applied""}",NULL,False,7
+9,1,"cardamom","{""unit_conversion"": ""3.0 x cardamom (~0.2g) → 0.6 g""}",NULL,False,8
+10,1,"cumin","{""unit_conversion"": ""1.0 tsp → 5.0 g (approx)""}",NULL,False,9
+11,2,"cashew","{""unit_conversion"": ""12.0 x cashew (~1.5g) → 18.0 g""}",NULL,False,0
+12,2,"water","{""unit_conversion"": ""6.0 tbsp → 90.0 ml""}",NULL,False,1
+13,2,"bay leaf","{""unit_conversion"": ""no conversion applied""}",NULL,False,2
+14,2,"star anise","{""unit_conversion"": ""no conversion applied""}",NULL,True,3
+15,2,"strand mace","{""unit_conversion"": ""no conversion applied""}",NULL,True,4
+16,2,"cumin","{""unit_conversion"": ""0.5 tsp → 2.5 g (approx)""}",NULL,False,5
+17,2,"cardamom","{""unit_conversion"": ""2.0 x cardamom (~0.2g) → 0.4 g""}",NULL,False,6
+18,2,"clove","{""unit_conversion"": ""3.0 x clove (~0.1g) → 0.3 g""}",NULL,False,7
+19,2,"cinnamon","{""unit_conversion"": ""no conversion applied""}",NULL,False,8
+20,2,"oil","{""unit_conversion"": ""2.0 tbsp → 30.0 ml""}",NULL,False,9
+21,2,"green chili","{""unit_conversion"": ""1.0 x green chili (~5g) → 5.0 g""}",NULL,True,10
+22,2,"green peas","{""unit_conversion"": ""0.75 cup → 180.0 g (approx)""}",NULL,False,11
+23,2,"coriander","{""unit_conversion"": ""2.0 tbsp → 30.0 g (approx)""}",NULL,False,12
+24,2,"turmeric","{""unit_conversion"": ""0.25 tsp → 1.25 g (approx)""}",NULL,False,13
+25,2,"garam masala","{""unit_conversion"": ""1.0 tsp → 5.0 g (approx)""}",NULL,False,14
+26,4,"turmeric","{""unit_conversion"": ""0.125 tsp → 0.62 g (approx)""}",NULL,True,0
+27,4,"salt","{""unit_conversion"": ""0.25 tsp → 1.25 g (approx)""}",NULL,True,1
+28,4,"oil","{""unit_conversion"": ""1.0 tsp → 5.0 ml""}",NULL,False,2
+29,4,"onion","{""unit_conversion"": ""1.0 cup → 240.0 g (approx)""}",NULL,False,3
+30,4,"sugar","{""unit_conversion"": ""1.0 tsp → 5.0 g (approx)""}",NULL,True,4
+31,5,"onion","{""preparation"": [""chopped"", ""fine""], ""unit_conversion"": ""0.75 cup → 180.0 g (approx)""}",NULL,False,0
+32,5,"capsicum","{""unit_conversion"": ""0.3333333333333333 cup → 80.0 g (approx)""}",NULL,False,1
+33,5,"cumin","{""unit_conversion"": ""0.5 tsp → 2.5 g (approx)""}",NULL,False,2
+34,5,"cardamom","{""unit_conversion"": ""2.0 x cardamom (~0.2g) → 0.4 g""}",NULL,False,3
+35,5,"garlic","{""unit_conversion"": ""1.0 tsp → 5.0 g (approx)""}",NULL,False,4
+36,5,"red chili","{""unit_conversion"": ""1.0 tsp → 5.0 g (approx)""}",NULL,False,5
+37,5,"garam masala","{""unit_conversion"": ""0.75 tsp → 3.75 g (approx)""}",NULL,False,6
+38,5,"salt","{""unit_conversion"": ""0.5 tsp → 2.5 g (approx)""}",NULL,True,7
+39,5,"water","{""unit_conversion"": ""0.75 cup → 180.0 ml""}",NULL,True,8
+40,5,"oil","{""unit_conversion"": ""1.0 tbsp → 15.0 ml""}",NULL,False,9
+41,5,"green chili","{""preparation"": [""sliced"", ""deseeded""], ""unit_conversion"": ""2.0 x green chili (~5g) → 10.0 g""}",NULL,False,10
+42,6,"rice","{""unit_conversion"": ""2.0 cup → 480.0 g (approx)""}",NULL,False,0
+43,6,"urad dal","{""unit_conversion"": ""0.5 cup → 120.0 g (approx)""}",NULL,False,1
+44,6,"fenugreek","{""unit_conversion"": ""1.0 tsp → 5.0 g (approx)""}",NULL,False,2
+45,6,"potato","{""unit_conversion"": ""4.0 x potato (~150g) → 600.0 g""}",NULL,False,3
+46,6,"mustard","{""unit_conversion"": ""1.0 tsp → 5.0 g (approx)""}",NULL,False,4
+47,6,"curry leaves","{""unit_conversion"": ""Adjusted to taste / standard requirement""}",NULL,False,5
+48,6,"chili","{""unit_conversion"": ""2.0 x chili (~5g) → 10.0 g""}",NULL,False,6
+49,6,"turmeric","{""unit_conversion"": ""0.5 tsp → 2.5 g (approx)""}",NULL,False,7
+50,6,"ginger","{""unit_conversion"": ""no conversion applied""}",NULL,False,8
+51,6,"onion","{""unit_conversion"": ""1.0 x onion (~100g) → 100.0 g""}",NULL,False,9
+52,6,"oil","{""unit_conversion"": ""Adjusted to taste / standard requirement""}",NULL,True,10
+53,6,"salt","{""unit_conversion"": ""Adjusted to taste / standard requirement""}",NULL,True,11
+54,7,"garlic","{""unit_conversion"": ""1.0 cup → 240.0 g (approx)""}",NULL,False,0
+55,7,"water","{""unit_conversion"": ""1.0 cup → 240.0 ml""}",NULL,True,1
+56,7,"mustard","{""unit_conversion"": ""1.0 tsp → 5.0 g (approx)""}",NULL,False,2
+57,7,"fenugreek","{""unit_conversion"": ""Quantity as per recipe requirement / instructions""}",NULL,False,3
+58,7,"red chili","{""preparation"": [""whole""], ""unit_conversion"": ""2.0 x red chili (~2g) → 4.0 g""}",NULL,False,4
+59,7,"asafoetida","{""unit_conversion"": ""Adjusted to taste / standard requirement""}",NULL,False,5
+60,7,"curry leaves","{""unit_conversion"": ""Adjusted to taste / standard requirement""}",NULL,False,6
+61,7,"onion","{""preparation"": [""chopped""], ""unit_conversion"": ""1.0 x onion (~100g) → 100.0 g""}",NULL,False,7
+62,7,"tomato","{""preparation"": [""chopped""], ""unit_conversion"": ""1.0 x tomato (~100g) → 100.0 g""}",NULL,False,8
+63,7,"carrot","{""preparation"": [""chopped""], ""unit_conversion"": ""1.0 x carrot (~100g) → 100.0 g""}",NULL,False,9
+64,7,"potato","{""preparation"": [""chopped"", ""boiled""], ""unit_conversion"": ""2.0 x potato (~150g) → 300.0 g""}",NULL,False,10
+65,7,"salt","{""unit_conversion"": ""Adjusted to taste / standard requirement""}",NULL,True,11
+66,7,"sambar masala","{""unit_conversion"": ""2.0 tsp → 10.0 g (approx)""}",NULL,False,12
+67,7,"jaggery","{""unit_conversion"": ""1.0 tsp → 5.0 g (approx)""}",NULL,False,13
+68,8,"yogurt","{""unit_conversion"": ""1.0 cup → 240.0 ml""}",NULL,False,0
+69,8,"honey","{""unit_conversion"": ""1.0 tbsp → 15.0 g (approx)""}",NULL,False,1
+70,8,"mixed nuts","{""unit_conversion"": ""2.0 tbsp → 30.0 g (approx)""}",NULL,False,2
+71,8,"berries","{""preparation"": [""fresh"", ""raw""], ""unit_conversion"": ""0.5 cup → 120.0 g (approx)""}",NULL,False,3
+72,8,"chia seeds","{""unit_conversion"": ""1.0 tsp → 5.0 g (approx)""}",NULL,False,4
+73,9,"coffee","{""unit_conversion"": ""3.0 tsp → 15.0 g (approx)""}",NULL,False,0
+74,9,"water","{""unit_conversion"": ""1.0 cup → 240.0 ml""}",NULL,False,1
+75,10,"water","{""unit_conversion"": ""0.25 cup → 60.0 ml""}",NULL,False,0
+76,10,"milk","{""unit_conversion"": ""2.0 cup → 480.0 ml""}",NULL,False,1
+77,11,"almond","{""unit_conversion"": ""35.0 x almond (~1.2g) → 42.0 g""}",NULL,False,0
+78,11,"milk","{""unit_conversion"": ""2.25 cup → 540.0 ml""}",NULL,False,1
+79,11,"cardamom","{""unit_conversion"": ""4.0 x cardamom (~0.2g) → 0.8 g""}",NULL,False,2
+80,11,"sauce","{""unit_conversion"": ""Quantity as per recipe requirement / instructions""}",NULL,False,3
+81,11,"saffron","{""unit_conversion"": ""Adjusted to taste / standard requirement""}",NULL,False,4
+82,12,"rice","{""unit_conversion"": ""1.5 cup → 360.0 g (approx)""}",NULL,False,0
+83,12,"onion","{""preparation"": [""chopped"", ""fine""], ""unit_conversion"": ""1.0 x onion (~100g) → 100.0 g""}",NULL,False,1
+84,12,"green chili","{""preparation"": [""chopped"", ""fine""], ""unit_conversion"": ""1.0 x green chili (~5g) → 5.0 g""}",NULL,False,2
+85,12,"mustard","{""unit_conversion"": ""1.0 tsp → 5.0 g (approx)""}",NULL,False,3
+86,12,"turmeric","{""unit_conversion"": ""0.5 tsp → 2.5 g (approx)""}",NULL,False,4
+87,12,"coriander","{""preparation"": [""chopped""], ""unit_conversion"": ""2.0 tbsp → 30.0 g (approx)""}",NULL,False,5
+88,12,"lemon","{""unit_conversion"": ""1.0 x lemon (~50g) → 50.0 g""}",NULL,False,6
+89,12,"oil","{""unit_conversion"": ""2.0 tbsp → 30.0 ml""}",NULL,False,7
+90,12,"salt","{""unit_conversion"": ""Adjusted to taste / standard requirement""}",NULL,True,8
+91,13,"semolina","{""unit_conversion"": ""1.0 cup → 240.0 g (approx)""}",NULL,False,0
+92,13,"ghee","{""unit_conversion"": ""3.0 tbsp → 45.0 ml""}",NULL,False,1
+93,13,"moong dal","{""unit_conversion"": ""1.0 tbsp → 15.0 g (approx)""}",NULL,False,2
+94,13,"urad dal","{""unit_conversion"": ""1.0 tsp → 5.0 g (approx)""}",NULL,False,3
+95,13,"chana dal","{""unit_conversion"": ""1.0 tsp → 5.0 g (approx)""}",NULL,False,4
+96,13,"mustard","{""unit_conversion"": ""1.0 tsp → 5.0 g (approx)""}",NULL,False,5
+97,13,"asafoetida","{""unit_conversion"": ""Adjusted to taste / standard requirement""}",NULL,False,6
+98,13,"curry leaves","{""unit_conversion"": ""Adjusted to taste / standard requirement""}",NULL,False,7
+99,13,"cashew","{""unit_conversion"": ""10.0 x cashew (~1.5g) → 15.0 g""}",NULL,False,8
+100,13,"onion","{""preparation"": [""chopped"", ""fine""], ""unit_conversion"": ""2.0 x onion (~100g) → 200.0 g""}",NULL,False,9

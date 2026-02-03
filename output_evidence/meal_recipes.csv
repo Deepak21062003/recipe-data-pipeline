@@ -1,0 +1,101 @@
+"id","meal_id","recipe_id","recipe_name","order_index","is_main_dish","is_optional"
+1,1,1,"Chicken Kolhapuri",NULL,True,False
+2,2,2,"Veg Kurma Recipe (Vegetable Korma)",NULL,True,False
+3,3,3,"Mushroom Curry (Mushroom Masala)",NULL,True,False
+4,4,4,"Paneer Tikka Masala Recipe",NULL,True,False
+5,5,5,"Paneer Do Pyaza",NULL,True,False
+6,6,6,"Masala Dosa",NULL,True,False
+7,7,7,"Idli Sambar",NULL,True,False
+8,8,8,"Greek Yogurt Bowl",NULL,True,False
+9,9,9,"Filter Coffee Recipe (South Indian Coffee)",NULL,True,False
+10,10,10,"Cold Coffee Recipe (Iced Coffee)",NULL,True,False
+11,11,11,"Badam Milk Recipe (Creamy Indian Almond Drink)",NULL,True,False
+12,12,12,"Poha",NULL,True,False
+13,13,13,"Perfect Upma",NULL,True,False
+14,14,14,"Aloo Paratha",NULL,True,False
+15,15,15,"Chilli Paneer Paratha",NULL,True,False
+16,16,16,"Chicken Chettinad Gravy Recipe",NULL,True,False
+17,17,17,"Vegetable Sandwich",NULL,True,False
+18,18,18,"Indian Egg Bhurji",NULL,True,False
+19,19,19,"Plain Omelette",NULL,True,False
+20,20,20,"Masala Omelette",NULL,True,False
+21,21,21,"Rava Kesari",NULL,True,False
+22,22,22,"Brioche French Toast",NULL,True,False
+23,23,23,"Classic Pancakes",NULL,True,False
+24,24,24,"Upgraded Oats Porridge",NULL,True,False
+25,25,25,"Vegetable Oats Upma",NULL,True,False
+26,26,26,"16 Beetroot Recipes from Indian Cuisine",NULL,True,False
+27,27,27,"Sabudana Khichdi",NULL,True,False
+28,28,28,"Poori Bhaji",NULL,True,False
+29,29,29,"Chole Bhature Breakfast Plate",NULL,True,False
+30,30,30,"Egg Fried Rice Breakfast",NULL,True,False
+31,31,31,"Banana Smoothie Bowl",NULL,True,False
+32,32,32,"Vegetable Poha Cutlets",NULL,True,False
+33,33,33,"Bread Pakora",NULL,True,False
+34,34,34,"Stuffed Cheese Garlic Bread",NULL,True,False
+35,35,35,"Sprouts Salad Bowl",NULL,True,False
+36,36,36,"High-Protein Chocolate Peanut Butter Breakfast Parfait",NULL,True,False
+37,37,37,"Blue Raspberry Smoothie Bowl",NULL,True,False
+38,38,38,"Mango Smoothie Bowl",NULL,True,False
+39,39,39,"Besan Chilla",NULL,True,False
+40,40,40,"Moong Dal Chilla",NULL,True,False
+41,41,41,"Rava Idli",NULL,True,False
+42,42,42,"Instant Set Dosa",NULL,True,False
+43,43,43,"Neer Dosa",NULL,True,False
+44,44,44,"Andhra Special Pesarattu",NULL,True,False
+45,45,45,"Onion Uttapam",NULL,True,False
+46,46,46,"Uttapam - Mixed Veg",NULL,True,False
+47,47,47,"Eggless Banana Muffins",NULL,True,False
+48,48,48,"Veggie Egg Muffins",NULL,True,False
+49,49,49,"Breakfast Burrito - Veg",NULL,True,False
+50,50,50,"Simple Breakfast Burrito - Egg and Sausage",NULL,True,False
+51,51,51,"Amazing Creamy Avocado Toast",NULL,True,False
+52,52,52,"Tomato Cheese Toast",NULL,True,False
+53,53,53,"Crispy Fried Chicken Sandwich With Honey-Sriracha Sauce on a Brioche Bun",NULL,True,False
+54,54,54,"Creamy Egg Salad Sandwich",NULL,True,False
+55,55,55,"Homemade Granola",NULL,True,False
+56,56,56,"Paneer Bhurji",NULL,True,False
+57,57,57,"Stuffed Capsicum Omelette",NULL,True,False
+58,58,58,"Masala Maggi Breakfast",NULL,True,False
+59,59,59,"Thalipeeth",NULL,True,False
+60,60,60,"Travel Friendly Methi Thepla",NULL,True,False
+61,61,61,"Masala Cornflakes Mix",NULL,True,False
+62,62,62,"Vegetable Sevai Upma",NULL,True,False
+63,63,63,"Idiyappam with Hotel Style Vegetable Kurma",NULL,True,False
+64,64,64,"Appam with Vegetable Stew",NULL,True,False
+65,65,65,"Instant Ragi Dosa",NULL,True,False
+66,66,66,"Ragi Idli",NULL,True,False
+67,67,67,"Millet Upma",NULL,True,False
+68,68,68,"Korra Pongal",NULL,True,False
+69,69,69,"Ven Pongal",NULL,True,False
+70,70,70,"Sweet Pongal",NULL,True,False
+71,71,71,"Dal Khichdi",NULL,True,False
+72,72,72,"Masala Sabudana Vada",NULL,True,False
+73,73,73,"Egg Cheese Toast",NULL,True,False
+74,74,74,"Cheesy Scrambled Eggs",NULL,True,False
+75,75,75,"Aloo Gobi Recipe",NULL,True,False
+76,76,76,"Baingan Bharta Recipe (Eggplant Bharta)",NULL,True,False
+77,77,77,"Bhindi Fry Recipe | Okra Stir Fry",NULL,True,False
+78,78,78,"Stuffed Capsicum | Stuffed Bell Peppers Recipe",NULL,True,False
+79,79,79,"Veg Burger Recipe (Veggie Burger)",NULL,True,False
+80,80,80,"Navratan Korma Recipe (Navratan Curry)",NULL,True,False
+81,81,81,"Veg Biryani",NULL,True,False
+82,82,82,"Chicken Biryani",NULL,True,False
+83,83,83,"Chana Masala Recipe (Chickpea Masala)",NULL,True,False
+84,84,84,"Paneer Butter Masala",NULL,True,False
+85,85,85,"Dal Tadka",NULL,True,False
+86,86,86,"Rajma Chawal",NULL,True,False
+87,87,87,"Chole Bhature",NULL,True,False
+88,88,88,"Jeera Rice with Dal Fry",NULL,True,False
+89,89,89,"Lemon Rice",NULL,True,False
+90,90,90,"Thecha Curd Rice",NULL,True,False
+91,91,91,"Veg Pulao",NULL,True,False
+92,92,92,"Mushroom Masala",NULL,True,False
+93,93,93,"Kadai Paneer",NULL,True,False
+94,94,94,"Palak Paneer",NULL,True,False
+95,95,95,"Aloo Gobi",NULL,True,False
+96,96,96,"Restaurant Style Mix Veg Curry",NULL,True,False
+97,97,97,"Butter Chicken",NULL,True,False
+98,98,98,"Rohu Fish Curry",NULL,True,False
+99,99,99,"Egg Curry (Dhaba Style)",NULL,True,False
+100,100,100,"Chicken Maharani Curry",NULL,True,False

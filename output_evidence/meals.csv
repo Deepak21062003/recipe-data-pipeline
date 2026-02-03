@@ -1,0 +1,101 @@
+"id","name","meal_type","total_time_minutes","estimated_cost"
+1,"Chicken Kolhapuri Meal","dinner",50,NULL
+2,"Veg Kurma Recipe (Vegetable Korma) Meal","dinner",50,NULL
+3,"Mushroom Curry (Mushroom Masala) Meal","dinner",50,NULL
+4,"Paneer Tikka Masala Recipe Meal","dinner",50,NULL
+5,"Paneer Do Pyaza Meal","dinner",50,NULL
+6,"Masala Dosa Meal","breakfast",50,NULL
+7,"Idli Sambar Meal","breakfast",40,NULL
+8,"Greek Yogurt Bowl Meal","dinner",5,NULL
+9,"Filter Coffee Recipe (South Indian Coffee) Meal","dinner",15,NULL
+10,"Cold Coffee Recipe (Iced Coffee) Meal","dinner",10,NULL
+11,"Badam Milk Recipe (Creamy Indian Almond Drink) Meal","dinner",15,NULL
+12,"Poha Meal","breakfast",20,NULL
+13,"Perfect Upma Meal","breakfast",25,NULL
+14,"Aloo Paratha Meal","dinner",30,NULL
+15,"Chilli Paneer Paratha Meal","dinner",35,NULL
+16,"Chicken Chettinad Gravy Recipe Meal","dinner",50,NULL
+17,"Vegetable Sandwich Meal","dinner",10,NULL
+18,"Indian Egg Bhurji Meal","dinner",20,NULL
+19,"Plain Omelette Meal","dinner",7,NULL
+20,"Masala Omelette Meal","dinner",5,NULL
+21,"Rava Kesari Meal","dinner",20,NULL
+22,"Brioche French Toast Meal","dinner",20,NULL
+23,"Classic Pancakes Meal","dinner",15,NULL
+24,"Upgraded Oats Porridge Meal","dinner",20,NULL
+25,"Vegetable Oats Upma Meal","breakfast",30,NULL
+26,"16 Beetroot Recipes from Indian Cuisine Meal","dinner",15,NULL
+27,"Sabudana Khichdi Meal","dinner",55,NULL
+28,"Poori Bhaji Meal","dinner",30,NULL
+29,"Chole Bhature Breakfast Plate Meal","dinner",60,NULL
+30,"Egg Fried Rice Breakfast Meal","lunch",15,NULL
+31,"Banana Smoothie Bowl Meal","dinner",5,NULL
+32,"Vegetable Poha Cutlets Meal","breakfast",30,NULL
+33,"Bread Pakora Meal","dinner",25,NULL
+34,"Stuffed Cheese Garlic Bread Meal","dinner",15,NULL
+35,"Sprouts Salad Bowl Meal","dinner",10,NULL
+36,"High-Protein Chocolate Peanut Butter Breakfast Parfait Meal","dinner",10,NULL
+37,"Blue Raspberry Smoothie Bowl Meal","dinner",5,NULL
+38,"Mango Smoothie Bowl Meal","dinner",10,NULL
+39,"Besan Chilla Meal","dinner",20,NULL
+40,"Moong Dal Chilla Meal","dinner",25,NULL
+41,"Rava Idli Meal","breakfast",25,NULL
+42,"Instant Set Dosa Meal","breakfast",15,NULL
+43,"Neer Dosa Meal","breakfast",20,NULL
+44,"Andhra Special Pesarattu Meal","dinner",30,NULL
+45,"Onion Uttapam Meal","dinner",25,NULL
+46,"Uttapam - Mixed Veg Meal","dinner",30,NULL
+47,"Eggless Banana Muffins Meal","dinner",30,NULL
+48,"Veggie Egg Muffins Meal","dinner",30,NULL
+49,"Breakfast Burrito - Veg Meal","dinner",20,NULL
+50,"Simple Breakfast Burrito - Egg and Sausage Meal","dinner",15,NULL
+51,"Amazing Creamy Avocado Toast Meal","dinner",10,NULL
+52,"Tomato Cheese Toast Meal","dinner",10,NULL
+53,"Crispy Fried Chicken Sandwich With Honey-Sriracha Sauce on a Brioche Bun Meal","dinner",55,NULL
+54,"Creamy Egg Salad Sandwich Meal","dinner",20,NULL
+55,"Homemade Granola Meal","dinner",55,NULL
+56,"Paneer Bhurji Meal","dinner",20,NULL
+57,"Stuffed Capsicum Omelette Meal","dinner",20,NULL
+58,"Masala Maggi Breakfast Meal","dinner",15,NULL
+59,"Thalipeeth Meal","dinner",25,NULL
+60,"Travel Friendly Methi Thepla Meal","dinner",35,NULL
+61,"Masala Cornflakes Mix Meal","dinner",10,NULL
+62,"Vegetable Sevai Upma Meal","breakfast",25,NULL
+63,"Idiyappam with Hotel Style Vegetable Kurma Meal","dinner",50,NULL
+64,"Appam with Vegetable Stew Meal","dinner",60,NULL
+65,"Instant Ragi Dosa Meal","breakfast",20,NULL
+66,"Ragi Idli Meal","breakfast",30,NULL
+67,"Millet Upma Meal","breakfast",45,NULL
+68,"Korra Pongal Meal","dinner",50,NULL
+69,"Ven Pongal Meal","dinner",65,NULL
+70,"Sweet Pongal Meal","dinner",40,NULL
+71,"Dal Khichdi Meal","dinner",30,NULL
+72,"Masala Sabudana Vada Meal","dinner",75,NULL
+73,"Egg Cheese Toast Meal","dinner",7,NULL
+74,"Cheesy Scrambled Eggs Meal","dinner",7,NULL
+75,"Aloo Gobi Recipe Meal","dinner",50,NULL
+76,"Baingan Bharta Recipe (Eggplant Bharta) Meal","dinner",50,NULL
+77,"Bhindi Fry Recipe | Okra Stir Fry Meal","dinner",50,NULL
+78,"Stuffed Capsicum | Stuffed Bell Peppers Recipe Meal","dinner",50,NULL
+79,"Veg Burger Recipe (Veggie Burger) Meal","dinner",50,NULL
+80,"Navratan Korma Recipe (Navratan Curry) Meal","dinner",50,NULL
+81,"Veg Biryani Meal","lunch",60,NULL
+82,"Chicken Biryani Meal","lunch",90,NULL
+83,"Chana Masala Recipe (Chickpea Masala) Meal","dinner",50,NULL
+84,"Paneer Butter Masala Meal","dinner",40,NULL
+85,"Dal Tadka Meal","dinner",40,NULL
+86,"Rajma Chawal Meal","dinner",60,NULL
+87,"Chole Bhature Meal","dinner",105,NULL
+88,"Jeera Rice with Dal Fry Meal","lunch",45,NULL
+89,"Lemon Rice Meal","lunch",25,NULL
+90,"Thecha Curd Rice Meal","lunch",30,NULL
+91,"Veg Pulao Meal","lunch",30,NULL
+92,"Mushroom Masala Meal","dinner",40,NULL
+93,"Kadai Paneer Meal","dinner",40,NULL
+94,"Palak Paneer Meal","dinner",40,NULL
+95,"Aloo Gobi Meal","dinner",40,NULL
+96,"Restaurant Style Mix Veg Curry Meal","dinner",40,NULL
+97,"Butter Chicken Meal","dinner",60,NULL
+98,"Rohu Fish Curry Meal","dinner",45,NULL
+99,"Egg Curry (Dhaba Style) Meal","dinner",45,NULL
+100,"Chicken Maharani Curry Meal","dinner",60,NULL

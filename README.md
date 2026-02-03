@@ -27,12 +27,12 @@ The pipeline converts **semi-structured and noisy recipe data** into a **structu
 recipe_pipeline/
 ├── data/
 │   └── recipes.json          # Provided dataset
-├── output_evidence/          # Verification screenshots
-│   ├── recipes.png
-│   ├── recipe_ingredients.png
-│   ├── meals.png
-│   ├── meal_recipes.png
-│   └── meal_ingredients.png
+├── output_evidence/          # Structured data evidence (CSV)
+│   ├── recipes.csv
+│   ├── recipe_ingredients.csv
+│   ├── meals.csv
+│   ├── meal_recipes.csv
+│   └── meal_ingredients.csv
 ├── src/
 │   ├── main.py               # Pipeline orchestrator & final sanitation
 │   ├── ingredient_parser.py  # Regex & Logic for ingredient extraction
@@ -41,7 +41,8 @@ recipe_pipeline/
 │   ├── time_normalizer.py    # Time extraction and calculation
 │   ├── standard_ingredients.py # Reference list for fuzzy matching
 │   ├── db.py                 # PostgreSQL connection setup
-│   └── db_insert.py          # Database insertion helpers
+│   ├── db_insert.py          # Database insertion helpers
+│   └── test_refinement.py    # Unit tests for parsing logic
 ├── sql/
 │   └── schema.sql            # Database schema (DDL)
 ├── README.md                 # Project documentation
@@ -60,7 +61,7 @@ The pipeline follows these distinct stages:
 
 2. **Cleaning & Filtering**
    - **Instruction Filtering**: Uses heuristics to detect and skip lines in the ingredient list that are actually instructions (e.g., starting with "add", "mix", "pour").
-   - **Sanitation**: Removes leading symbols (`/`, `-`, `,`), articles (`a`, `an`, `the`), and filler words.
+    - **Sanitation**: Removes noise like "can be scaled", trailing dots (`.`), leading symbols (`/`, `-`, `,`), articles (`a`, `an`, `the`), and filler words.
 
 3. **Parsing**
    - **Regex Extraction**: Separates quantity, unit, and ingredient name.
@@ -69,8 +70,10 @@ The pipeline follows these distinct stages:
 
 4. **Normalization & Logic**
    - **Time Normalization**: Extracts `prep_time` and `cook_time` into integer minutes and derives `total_time`.
-   - **Unit Normalization**: Standardizes diverse unit names (e.g., "tablespoon" -> "tbsp") and converts quantities to `g` for solids or `ml` for liquids.
-   - **Deduplication**: Identifies and merges duplicate ingredients within a single recipe, summing quantities where units are compatible.
+    - **Unit Normalization**: Standardizes diverse unit names and converts quantities to `g` for solids or `ml` for liquids.
+        - **Null Elimination**: Ensures `quantity` and `unit` are never null for solids/liquids (defaults to `1.0 g` or `1.0 ml` if missing).
+        - **Exemptions**: `saffron`, `hing`, `asafoetida`, and `curry leaves` are exempted from default quantity assignment to preserve recipe nuance.
+    - **Deduplication**: Identifies and merges duplicate ingredients within a single recipe, summing quantities where units are compatible.
 
 5. **Database Insertion**
    - Populates the five required PostgreSQL tables: `recipes`, `recipe_ingredients`, `meals`, `meal_recipes`, and `meal_ingredients`.
@@ -101,7 +104,7 @@ The pipeline follows these distinct stages:
 
 ### Unit & Unit-less Normalization (`unit_normalizer.py`)
 
-- Categorizes ingredients into **Solids** and **Liquids**.
+- **Enhanced Metadata**: Common items like salt, oil, and spices receive an "Adjusted to taste" note in `ingredient_info` if no manual conversion is applied.
 - **Unit-less counts**: Maps items like "2 potatoes" to an estimated weight in grams based on average weights (e.g., 1 potato ≈ 150g).
 
 ---
@@ -161,16 +164,21 @@ Execute the main script to process the data and populate the database:
 python src/main.py
 ```
 
+### Step 5: Verify results (Optional)
+Run the refinement tests to ensure parsing logic is performing as expected:
+```bash
+python src/test_refinement.py
+```
+
 ---
 
 ## Output Evidence
 
-Verification of the pipeline's success is provided via screenshots in the `output_evidence/` directory:
-- `recipes.png`: Populated recipe metadata.
-- `recipe_ingredients.png`: Structured and cleaned ingredient list.
-- `meals.png`: Categorized meals with extracted timing.
-- `meal_recipes.png`: Relationship mapping.
-- `meal_ingredients.png`: Final aggregated list of ingredients.
+- `recipes.csv`: Populated recipe metadata.
+- `recipe_ingredients.csv`: Structured and cleaned ingredient list with non-null quantities.
+- `meals.csv`: Categorized meals with extracted timing.
+- `meal_recipes.csv`: Relationship mapping.
+- `meal_ingredients.csv`: Final aggregated list of ingredients.
 
 ---
 
@@ -178,7 +186,7 @@ Verification of the pipeline's success is provided via screenshots in the `outpu
 
 1. **Rule-Based Specificity**: The parsing logic is highly effective for English Indian recipes but may require adjustments for other cuisines or languages.
 2. **Database Credentials**: Currently configured in `src/db.py`; should be environment-controlled for production use.
-3. **Ambiguity**: Phrases like "salt to taste" are categorized as 0 quantity or optional, as they cannot be definitively quantified.
+3. **Pantry Staple Heuristics**: Items like "salt to taste" are given a default note and standard minimal quantity where appropriate, though actual usage varies by cook.
 4. **LLM Usage**: **No external LLM APIs were used.** All parsing and normalization logic is entirely rule-based, deterministic, and locally executed.
 
 ---

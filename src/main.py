@@ -54,6 +54,9 @@ def final_cleanup_ingredient_name(name: str) -> str:
     # 1️⃣ Remove "recipe" or "recipes" noise
     name = re.sub(r'\b(recipes?)\b', '', name)
 
+    # 1.1️⃣ Remove "can be scaled" noise
+    name = re.sub(r'\bcan\s+be\s+scaled\b', '', name)
+
     # 2️⃣ Remove leading articles
     name = re.sub(r'^(a|an|the)\s+', '', name)
 

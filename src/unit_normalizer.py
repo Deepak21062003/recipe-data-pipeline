@@ -92,6 +92,8 @@ def normalize_quantity_unit(
 
     unit = unit.lower() if unit else None
     category = infer_category(ingredient_name)
+    clean_name_lower = ingredient_name.lower()
+    note = "no conversion applied"
 
     # 1. Try Normalize Solids
     if category == "solid":
@@ -118,7 +120,6 @@ def normalize_quantity_unit(
     # 3. Unit-less counts (e.g. 2 potatoes)
     if unit is None and category == "solid":
         # Check average weights
-        clean_name_lower = ingredient_name.lower()
         if clean_name_lower in AVERAGE_WEIGHTS:
             avg = AVERAGE_WEIGHTS[clean_name_lower]
             g = round(quantity * avg, 2)
@@ -126,4 +127,11 @@ def normalize_quantity_unit(
 
     # 4. Fallback: Return original values if no conversion possible
     # But try to cast quantity to float/int if possible
-    return quantity, unit, "no conversion applied"
+    
+    # 🔥 Special Handling for Common Ingredients (Ensure info is never empty)
+    if note == "no conversion applied":
+        common = {"salt", "oil", "asafoetida", "hing"}
+        if any(c in clean_name_lower for c in common):
+             note = "Adjusted to taste / standard requirement"
+
+    return quantity, unit, note

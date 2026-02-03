@@ -196,14 +196,15 @@ def process_recipe(recipe: dict) -> dict:
     # 📝 Combine into labeled plain text
     instructions_parts = []
     if clean_prep:
-        instructions_parts.append("PREPARATION STEPS:")
+        instructions_parts.append("prep_step:")
         instructions_parts.extend([f"- {step}" for step in clean_prep])
     
     if clean_cook:
         if instructions_parts:
             instructions_parts.append("") # Spacer
-        instructions_parts.append("COOKING STEPS:")
+        instructions_parts.append("cook_step:")
         instructions_parts.extend([f"- {step}" for step in clean_cook])
+
 
     instructions = "\n".join(instructions_parts)
 

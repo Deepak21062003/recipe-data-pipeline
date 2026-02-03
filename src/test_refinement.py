@@ -1,3 +1,4 @@
+import re
 from main import final_cleanup_ingredient_name
 from unit_normalizer import normalize_quantity_unit
 
@@ -21,10 +22,11 @@ def test_common_ingredient_info():
         ("saffron", None, None, None, "Adjusted to taste / standard requirement"),
         ("hing", None, None, None, "Adjusted to taste / standard requirement"),
         ("asafoetida", None, None, None, "Adjusted to taste / standard requirement"),
+        ("curry leaves", None, None, None, "Adjusted to taste / standard requirement"),
         ("ginger", None, 1.0, "g", "Default quantity assigned: 1.0 g"),
         ("water", None, 1.0, "ml", "Default quantity assigned: 1.0 ml"),
         ("fenugreek", None, 1.0, "g", "Default quantity assigned: 1.0 g"),
-        ("soy", None, 1.0, "ml", "Default quantity assigned: 1.0 ml") # soy is in liquid keywords via 'soy'? No, LIQUID_KEYWORDS has 'oil', 'juice', etc.
+        ("soy", None, 1.0, "ml", "Default quantity assigned: 1.0 ml")
     ]
     
     for name, qty, exp_qty, exp_unit, exp_note in test_cases:

@@ -138,7 +138,7 @@ def normalize_quantity_unit(
 
     # 4. Fallback: Ensure no null quantity/unit for solids/liquids (except exemptions)
     # 🔥 Special Handling: User requested no nulls for solids (g) and liquids (ml)
-    exemptions = {"saffron", "hing", "asafoetida"}
+    exemptions = {"saffron", "hing", "asafoetida", "curry leaves"}
     is_exempt = any(ex in clean_name_lower for ex in exemptions)
 
     if not is_exempt:

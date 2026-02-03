@@ -107,9 +107,18 @@ def looks_like_instruction(text: str) -> bool:
     
     # Imperative verbs / common step starts
     if re.match(
-        r'^(add|mix|stir|cook|boil|fry|pour|serve|make|heat|place|put|cover|garnish|transfer|blend|roast|saute|sauté|set|cool|blend|marinate|sprinkle|regulate|taste)\b',
+        r'^(add|mix|stir|cook|boil|fry|pour|serve|make|heat|place|put|cover|garnish|transfer|blend|'
+        r'roast|saute|sauté|set|cool|marinate|sprinkle|regulate|taste|peel|slice|chop|rinse|drain|'
+        r'mash|prepare|gather|wash|clean|cut|dice|grate|mince|whisk|combine|fold|knead|roll|'
+        r'bake|steam|grill|simmer|toast|soak|dry|measure|arrange|top|pour|layer|chill|refrigerate|'
+        r'thaw|preheat|discard|remove|separate|press|squeeze|spread|brush|dip|coat|scoop|shape|'
+        r'wrap|tie|pierce|seal|invert|flip|turn|slide|transfer|pour|empty|break|crack|beat|'
+        r'sift|strain|blanch|sear|render|skimmer|deglaze|reduce|shred|hull|pit|trim|core|'
+        r'zest|juice|quarter|halve|thinly|finely|roughly|well|slowly|carefully|immediately|'
+        r'once|when|after|while|before|until|during|then|next|finally)\b',
         text_lower
     ):
+
         return True
 
     if len(text.split()) > 5:

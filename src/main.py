@@ -188,22 +188,46 @@ def process_recipe(recipe: dict) -> dict:
 
     prep_steps = json.loads(recipe.get("prep_steps", "[]"))
     cook_steps = json.loads(recipe.get("cook_steps", "[]"))
+    quick_steps = json.loads(recipe.get("quick_steps", "[]"))
 
     # 🧼 Clean each part separately
     clean_prep = clean_instructions(prep_steps)
     clean_cook = clean_instructions(cook_steps)
+    clean_quick = clean_instructions(quick_steps)
 
     # 📝 Combine into labeled plain text
     instructions_parts = []
+    
+    # If we have clean_quick but missing one of the others, or if it provides a better summary,
+    # we can append it. For now, let's treat quick_steps as a fallback or additional info.
+    # The user example shows "Banana Smoothie Bowl" has NO cook_steps and only prep/quick.
+    
     if clean_prep:
         instructions_parts.append("prep_step:")
         instructions_parts.extend([f"- {step}" for step in clean_prep])
     
+    if clean_quick:
+        # If we already have prep, add a spacer. 
+        # But wait, if quick_steps repeat prep, we might get duplicates. 
+        # For Smoothie Bowl: prep=["Peel and slice..."], quick=["Slice banana...", "Blend...", "Pour...", "Serve..."]
+        # De-duplication might be needed.
+        if instructions_parts:
+            instructions_parts.append("")
+        instructions_parts.append("quick_step:") # Adding a label for quick steps
+        instructions_parts.extend([f"- {step}" for step in clean_quick])
+
     if clean_cook:
         if instructions_parts:
             instructions_parts.append("") # Spacer
         instructions_parts.append("cook_step:")
         instructions_parts.extend([f"- {step}" for step in clean_cook])
+
+    # If it's STILL empty, something is wrong with the filtering logic for this recipe
+    if not instructions_parts:
+        # Fallback: Just take prep/cook/quick without filtering if we ended up with nothing?
+        # No, better to see why it was filtered.
+        pass
+
 
 
     instructions = "\n".join(instructions_parts)

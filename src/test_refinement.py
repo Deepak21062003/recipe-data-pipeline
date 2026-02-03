@@ -15,22 +15,25 @@ def test_scaling_removal():
 
 def test_common_ingredient_info():
     test_cases = [
-        ("salt", None, "Adjusted to taste / standard requirement"),
-        ("oil", None, "Adjusted to taste / standard requirement"),
-        ("saffron", None, "Adjusted to taste / standard requirement"),
-        ("soy", None, "Adjusted to taste / standard requirement"),
-        ("butter", None, "Adjusted to taste / standard requirement"),
-        ("ghee", None, "Adjusted to taste / standard requirement"),
-        ("bhindi", None, "Quantity as per recipe requirement / instructions"),
-        ("okra", None, "Quantity as per recipe requirement / instructions"),
-        ("carrot", None, "Quantity as per recipe requirement / instructions")
+        # name, input_qty, expected_qty, expected_unit, expected_note
+        ("salt", None, 1.0, "g", "Default quantity assigned: 1.0 g"),
+        ("oil", None, 1.0, "ml", "Default quantity assigned: 1.0 ml"),
+        ("saffron", None, None, None, "Adjusted to taste / standard requirement"),
+        ("hing", None, None, None, "Adjusted to taste / standard requirement"),
+        ("asafoetida", None, None, None, "Adjusted to taste / standard requirement"),
+        ("ginger", None, 1.0, "g", "Default quantity assigned: 1.0 g"),
+        ("water", None, 1.0, "ml", "Default quantity assigned: 1.0 ml"),
+        ("fenugreek", None, 1.0, "g", "Default quantity assigned: 1.0 g"),
+        ("soy", None, 1.0, "ml", "Default quantity assigned: 1.0 ml") # soy is in liquid keywords via 'soy'? No, LIQUID_KEYWORDS has 'oil', 'juice', etc.
     ]
     
-    for name, qty, expected_note in test_cases:
-        _, _, note = normalize_quantity_unit(qty, None, name)
-        assert note == expected_note, f"Failed for {name}: Expected '{expected_note}', got '{note}'"
+    for name, qty, exp_qty, exp_unit, exp_note in test_cases:
+        res_qty, res_unit, res_note = normalize_quantity_unit(qty, None, name)
+        assert res_qty == exp_qty, f"Failed QTY for {name}: Expected {exp_qty}, got {res_qty}"
+        assert res_unit == exp_unit, f"Failed UNIT for {name}: Expected {exp_unit}, got {res_unit}"
+        assert exp_note in res_note, f"Failed NOTE for {name}: Expected '{exp_note}' to be in '{res_note}'"
             
-    print("✅ Global fallback and pantry info test passed!")
+    print("✅ Null quantity/unit elimination test passed!")
 
 if __name__ == "__main__":
     test_scaling_removal()

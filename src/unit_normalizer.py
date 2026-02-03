@@ -43,7 +43,8 @@ AVERAGE_WEIGHTS = {
 # ------------------------------------
 LIQUID_KEYWORDS = {
     "water", "milk", "oil", "juice", "curd", "yogurt",
-    "broth", "stock", "cream", "vinegar", "syrup", "ghee"
+    "broth", "stock", "cream", "vinegar", "syrup", "ghee",
+    "soy", "sauce"
 }
 
 SOLID_KEYWORDS = {
@@ -103,47 +104,57 @@ def normalize_quantity_unit(
     }
     is_common = any(c in clean_name_lower for c in common_pantry)
 
-    if quantity is None:
-        if is_common:
-            return None, None, "Adjusted to taste / standard requirement"
-        return None, None, "Quantity as per recipe requirement / instructions"
-
-    # 1. Try Normalize Solids
-    if category == "solid":
-        if unit in WEIGHT_TO_G:
-            g = round(quantity * WEIGHT_TO_G[unit], 2)
-            return g, "g", f"{quantity} {unit} → {g} g"
-        
-        # Approximate volume to weight for solids (1 ml approx 1 g for rough estimate)
-        if unit in VOLUME_TO_ML:
-             g = round(quantity * VOLUME_TO_ML[unit], 2)
-             return g, "g", f"{quantity} {unit} → {g} g (approx)"
-
-    # 2. Try Normalize Liquids
-    if category == "liquid":
-        if unit in VOLUME_TO_ML:
-            ml = round(quantity * VOLUME_TO_ML[unit], 2)
-            return ml, "ml", f"{quantity} {unit} → {ml} ml"
-        
-        # Approximate weight to volume (1 g approx 1 ml)
-        if unit in WEIGHT_TO_G:
-            ml = round(quantity * WEIGHT_TO_G[unit], 2)
-            return ml, "ml", f"{quantity} {unit} → {ml} ml (approx)"
+    # Skip conversion blocks if quantity is None
+    if quantity is not None:
+        # 1. Try Normalize Solids
+        if category == "solid":
+            if unit in WEIGHT_TO_G:
+                g = round(quantity * WEIGHT_TO_G[unit], 2)
+                return g, "g", f"{quantity} {unit} → {g} g"
             
-    # 3. Unit-less counts (e.g. 2 potatoes)
-    if unit is None and category == "solid":
-        # Check average weights
-        if clean_name_lower in AVERAGE_WEIGHTS:
-            avg = AVERAGE_WEIGHTS[clean_name_lower]
-            g = round(quantity * avg, 2)
-            return g, "g", f"{quantity} x {clean_name_lower} (~{avg}g) → {g} g"
+            # Approximate volume to weight for solids (1 ml approx 1 g for rough estimate)
+            if unit in VOLUME_TO_ML:
+                 g = round(quantity * VOLUME_TO_ML[unit], 2)
+                 return g, "g", f"{quantity} {unit} → {g} g (approx)"
 
-    # 4. Fallback: Return original values if no conversion possible
-    # But try to cast quantity to float/int if possible
-    
+        # 2. Try Normalize Liquids
+        if category == "liquid":
+            if unit in VOLUME_TO_ML:
+                ml = round(quantity * VOLUME_TO_ML[unit], 2)
+                return ml, "ml", f"{quantity} {unit} → {ml} ml"
+            
+            # Approximate weight to volume (1 g approx 1 ml)
+            if unit in WEIGHT_TO_G:
+                ml = round(quantity * WEIGHT_TO_G[unit], 2)
+                return ml, "ml", f"{quantity} {unit} → {ml} ml (approx)"
+                
+        # 3. Unit-less counts (e.g. 2 potatoes)
+        if unit is None and category == "solid":
+            # Check average weights
+            if clean_name_lower in AVERAGE_WEIGHTS:
+                avg = AVERAGE_WEIGHTS[clean_name_lower]
+                g = round(quantity * avg, 2)
+                return g, "g", f"{quantity} x {clean_name_lower} (~{avg}g) → {g} g"
+
+    # 4. Fallback: Ensure no null quantity/unit for solids/liquids (except exemptions)
+    # 🔥 Special Handling: User requested no nulls for solids (g) and liquids (ml)
+    exemptions = {"saffron", "hing", "asafoetida"}
+    is_exempt = any(ex in clean_name_lower for ex in exemptions)
+
+    if not is_exempt:
+        if quantity is None:
+            quantity = 1.0
+        if unit is None:
+            unit = "g" if category == "solid" else "ml"
+        
+        if note == "no conversion applied":
+            note = f"Default quantity assigned: {quantity} {unit}"
+
     # 🔥 Special Handling for Common Ingredients (Ensure info is never empty)
-    if note == "no conversion applied":
+    if note == "no conversion applied" or not note:
         if is_common:
              note = "Adjusted to taste / standard requirement"
+        else:
+             note = "Quantity as per recipe requirement / instructions"
 
     return quantity, unit, note

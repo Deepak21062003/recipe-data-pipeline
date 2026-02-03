@@ -14,27 +14,22 @@ def test_scaling_removal():
 
 def test_common_ingredient_info():
     test_cases = [
-        ("salt", None),
-        ("oil", None),
-        ("asafoetida", None),
-        ("hing", None),
-        ("curry leaves", None),
-        ("water", 1),
-        ("mustard seeds", None),
-        ("black pepper", None)
+        ("salt", None, "Adjusted to taste / standard requirement"),
+        ("oil", None, "Adjusted to taste / standard requirement"),
+        ("saffron", None, "Adjusted to taste / standard requirement"),
+        ("soy", None, "Adjusted to taste / standard requirement"),
+        ("butter", None, "Adjusted to taste / standard requirement"),
+        ("ghee", None, "Adjusted to taste / standard requirement"),
+        ("bhindi", None, "Quantity as per recipe requirement / instructions"),
+        ("okra", None, "Quantity as per recipe requirement / instructions"),
+        ("carrot", None, "Quantity as per recipe requirement / instructions")
     ]
     
-    for name, qty in test_cases:
+    for name, qty, expected_note in test_cases:
         _, _, note = normalize_quantity_unit(qty, None, name)
-        
-        common_keywords = [
-            "salt", "oil", "asafoetida", "hing", "curry leaves", 
-            "water", "mustard seeds", "black pepper"
-        ]
-        if any(c in name for c in common_keywords):
-            assert note == "Adjusted to taste / standard requirement", f"Failed for {name}: {note}"
+        assert note == expected_note, f"Failed for {name}: Expected '{expected_note}', got '{note}'"
             
-    print("✅ Common ingredient info test passed!")
+    print("✅ Global fallback and pantry info test passed!")
 
 if __name__ == "__main__":
     test_scaling_removal()

@@ -87,13 +87,22 @@ def normalize_quantity_unit(
       conversion_note
     """
 
-    if quantity is None or not ingredient_name:
+    if not ingredient_name:
         return None, None, None
 
-    unit = unit.lower() if unit else None
-    category = infer_category(ingredient_name)
     clean_name_lower = ingredient_name.lower()
     note = "no conversion applied"
+    unit = unit.lower() if unit else None
+    category = infer_category(ingredient_name)
+
+    # 🔥 Special Handle: Common Pantry Items (often have no quantity)
+    common_pantry = {"salt", "oil", "asafoetida", "hing", "curry leaves", "water", "mustard seeds", "cumin seeds", "jeera", "pepper", "black pepper"}
+    is_common = any(c in clean_name_lower for c in common_pantry)
+
+    if quantity is None:
+        if is_common:
+            return None, None, "Adjusted to taste / standard requirement"
+        return None, None, None
 
     # 1. Try Normalize Solids
     if category == "solid":
@@ -130,8 +139,7 @@ def normalize_quantity_unit(
     
     # 🔥 Special Handling for Common Ingredients (Ensure info is never empty)
     if note == "no conversion applied":
-        common = {"salt", "oil", "asafoetida", "hing"}
-        if any(c in clean_name_lower for c in common):
+        if is_common:
              note = "Adjusted to taste / standard requirement"
 
     return quantity, unit, note

@@ -14,25 +14,25 @@ def test_scaling_removal():
 
 def test_common_ingredient_info():
     test_cases = [
-        ("salt", "no conversion applied"), # Before fix this might have been default
-        ("oil", "no conversion applied"),
-        ("asafoetida", "no conversion applied"),
-        ("hing", "no conversion applied"),
-        ("potato", "no conversion applied")
+        ("salt", None),
+        ("oil", None),
+        ("asafoetida", None),
+        ("hing", None),
+        ("curry leaves", None),
+        ("water", 1),
+        ("mustard seeds", None),
+        ("black pepper", None)
     ]
     
-    # We want to see if our fix overrides "no conversion applied" for common ones
-    for name, _ in test_cases:
-        qty, unit, note = normalize_quantity_unit(None, None, name)
-        # Note: it returns None if quantity is None in the current implementation of normalize_quantity_unit
-        # Let's check with a quantity
-        qty, unit, note = normalize_quantity_unit(1, None, name)
+    for name, qty in test_cases:
+        _, _, note = normalize_quantity_unit(qty, None, name)
         
-        if any(c in name for c in ["salt", "oil", "asafoetida", "hing"]):
+        common_keywords = [
+            "salt", "oil", "asafoetida", "hing", "curry leaves", 
+            "water", "mustard seeds", "black pepper"
+        ]
+        if any(c in name for c in common_keywords):
             assert note == "Adjusted to taste / standard requirement", f"Failed for {name}: {note}"
-        else:
-            # potato with no unit and no average weight check (if name not in list)
-            pass 
             
     print("✅ Common ingredient info test passed!")
 

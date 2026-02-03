@@ -89,10 +89,6 @@ def extract_preparation(text: str):
 
 
 def clean_ingredient_name(text: str) -> str:
-    # 0️⃣ Remove ▢ symbol
-    text = text.replace("▢", "").strip()
-    
-    # 1️⃣ Standard removals
     text = re.sub(r'\d+(\.\d+)?', '', text)
     text = re.sub(r'\d+\s*/\s*\d+', '', text)
 
@@ -109,13 +105,7 @@ def clean_ingredient_name(text: str) -> str:
     text = re.sub(r'\s+', ' ', text)
     text = text.strip()
 
-    # 2️⃣ Short-circuit on noise
-    if not text or len(text) < 2 or re.match(r'^[\W_]+$', text):
-        return ""
-
-    # 3️⃣ Fuzzy matching against standard ingredients
-    # If text is very long, it might be a sentence. 
-    # Try process.extractOne which is good at finding matches in noise.
+    # Fuzzy matching against standard ingredients
     best_match = process.extractOne(
         text,
         STANDARD_INGREDIENTS,
@@ -124,7 +114,6 @@ def clean_ingredient_name(text: str) -> str:
 
     if best_match:
         match, score, _ = best_match
-        # Lower threshold for descriptive text but still require some confidence
         if score >= 80:
             return match
 

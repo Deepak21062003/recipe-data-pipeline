@@ -7,8 +7,7 @@ from instruction_cleaner import clean_instructions, looks_like_instruction
 from time_normalizer import normalize_times
 from unit_normalizer import normalize_quantity_unit
 
-from rapidfuzz import process, fuzz
-from standard_ingredients import STANDARD_INGREDIENTS
+from db import get_connection
 from db_insert import (
     insert_recipe,
     insert_recipe_ingredients,
@@ -63,7 +62,7 @@ def final_cleanup_ingredient_name(name: str) -> str:
 
     # 3️⃣ Remove ALL symbols anywhere (enhanced)
     # Put hyphen at the end to avoid creating a range (comma to en-dash swallowed letters!)
-    name = re.sub(r'[\\/,–—\(\)\[\]\{\}-]+', ' ', name)
+    name = re.sub(r'[\\/,–—\(\)\[\]\{\}.\-]+', ' ', name)
 
     # 4️⃣ Remove quantity / size words (dynamic)
     name = re.sub(
@@ -94,22 +93,6 @@ def final_cleanup_ingredient_name(name: str) -> str:
     # 8️⃣ Final whitespace cleanup
     name = re.sub(r'\s+', ' ', name).strip()
 
-    # 9️⃣ Fuzzy matching against standard ingredients
-    if len(name) > 3:
-        best_match = process.extractOne(
-            name,
-            STANDARD_INGREDIENTS,
-            scorer=fuzz.WRatio
-        )
-        if best_match:
-            match, score, _ = best_match
-            if score >= 85:
-                name = match
-
-    # 🔟 Rejection of noise-only strings (e.g. ".", "-", "▢")
-    if not name or len(name) < 2 or re.match(r'^[\W_]+$', name):
-        return ""
-
     return name
 
 
@@ -139,72 +122,69 @@ def infer_meal_type(recipe_name: str) -> str:
 # ------------------------------------
 def process_recipe(recipe: dict) -> dict:
     parsed_ingredients = []
-    ingredients_json = recipe.get("ingredients_json", "[]")
 
-    try:
-        items = json.loads(ingredients_json)
-        for item in items:
-            raw_name = item.get("name", "").strip()
-            raw_qty = item.get("quantity", "").strip()
-            
-            # Clean "▢" noise early
-            raw_name = raw_name.replace("▢", "").strip()
-            raw_qty = raw_qty.replace("▢", "").strip()
+    raw_ingredients = json.loads(recipe.get("ingredients_json", "[]"))
 
-            # Robust join
-            combined = f"{raw_qty} {raw_name}".strip()
-            if not combined:
-                continue
+    for item in raw_ingredients:
+        raw_name = item.get("name", "").lower().strip()
+        raw_qty = item.get("quantity", "").replace("▢", "").strip()
 
-            parsed = parse_ingredient(combined)
-            
-            # 🔥 FINAL CLEANUP
-            clean_name = final_cleanup_ingredient_name(
-                parsed.get("ingredient_name", "")
-            )
-            
-            if not clean_name or not final_is_valid_ingredient(clean_name):
-                continue
-            
-            parsed["ingredient_name"] = clean_name
+        if not raw_name or looks_like_instruction(raw_name):
+            continue
 
-            # Unit normalization
-            qty, unit, note = normalize_quantity_unit(
-                parsed.get("quantity"),
-                parsed.get("unit"),
-                clean_name
-            )
+        parsed = parse_ingredient(f"{raw_qty} {raw_name}".strip())
 
-            parsed["quantity"] = qty
-            parsed["unit"] = unit
+        # 🔥 FINAL CLEANUP
+        clean_name = final_cleanup_ingredient_name(
+            parsed.get("ingredient_name", "")
+        )
 
-            if note:
-                parsed.setdefault("ingredient_info", {})
-                parsed["ingredient_info"]["unit_conversion"] = note
+        if not final_is_valid_ingredient(clean_name):
+            continue
 
-            # MERGE DUPLICATES
-            found = False
-            for existing in parsed_ingredients:
-                if existing["ingredient_name"] == clean_name:
-                    found = True
-                    if existing["unit"] == unit:
-                        if existing["quantity"] is not None and qty is not None:
-                            existing["quantity"] += qty
-                        elif qty is not None:
-                             existing["quantity"] = qty
-                    elif existing["unit"] is None and unit is not None:
-                        existing["unit"] = unit
-                        existing["quantity"] = qty
-                        if note:
-                            existing.setdefault("ingredient_info", {})
-                            existing["ingredient_info"]["unit_conversion"] = note
-                    break
-            
-            if not found:
-                 parsed_ingredients.append(parsed)
+        parsed["ingredient_name"] = clean_name
 
-    except (json.JSONDecodeError, TypeError):
-        pass
+        # Unit normalization
+        qty, unit, note = normalize_quantity_unit(
+            parsed.get("quantity"),
+            parsed.get("unit"),
+            clean_name
+        )
+
+        parsed["quantity"] = qty
+        parsed["unit"] = unit
+
+        if note:
+            parsed.setdefault("ingredient_info", {})
+            parsed["ingredient_info"]["unit_conversion"] = note
+
+        # MERGE DUPLICATES (Strict Name Deduplication)
+        found = False
+        for existing in parsed_ingredients:
+            if existing["ingredient_name"] == clean_name:
+                found = True
+                
+                # Case 1: Exact unit match -> Sum
+                if existing["unit"] == unit:
+                    if existing["quantity"] is not None and qty is not None:
+                        existing["quantity"] += qty
+                    elif qty is not None:
+                         existing["quantity"] = qty
+                         
+                # Case 2: Existing has NO unit, New has unit -> Overwrite with New
+                elif existing["unit"] is None and unit is not None:
+                    existing["unit"] = unit
+                    existing["quantity"] = qty # Replace ambiguous qty with valid one
+                    if note: # Update conversion note
+                        existing.setdefault("ingredient_info", {})
+                        existing["ingredient_info"]["unit_conversion"] = note
+
+                # Case 3: Existing has unit, New has NO unit -> Ignore New (assuming it's noise)
+                # Case 4: Mismatched units (e.g. g vs ml) -> Ignore New to enforce unique name
+                break
+        
+        if not found:
+             parsed_ingredients.append(parsed)
 
     instructions = clean_instructions(
         json.loads(recipe.get("prep_steps", "[]")) +

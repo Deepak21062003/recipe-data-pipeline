@@ -23,7 +23,7 @@ def insert_recipe(cur, recipe):
         (
             recipe["recipe_name"],
             None,
-            Json(recipe["instructions"]),
+            recipe["instructions"],
             recipe["prep_time_minutes"],
             recipe["cook_time_minutes"],
             recipe["total_time_minutes"],

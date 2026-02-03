@@ -122,7 +122,7 @@ The pipeline follows these distinct stages:
 ## Database Schema
 
 The PostgreSQL schema (`sql/schema.sql`) includes:
-- **`recipes`**: Stores metadata, timing, and cleaned instruction JSON.
+- **`recipes`**: Stores metadata, timing, and combined instruction text.
 - **`recipe_ingredients`**: Links ingredients to recipes with parsed info and optional flags.
 - **`meals`**: High-level categorization of dishes.
 - **`meal_recipes`**: Mapping table between meals and recipes.

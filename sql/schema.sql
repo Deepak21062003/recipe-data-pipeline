@@ -5,7 +5,7 @@ CREATE TABLE recipes (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     description TEXT,
-    instructions JSONB NOT NULL,
+    instructions TEXT NOT NULL,
     prep_time_minutes INTEGER,
     cook_time_minutes INTEGER,
     total_time_minutes INTEGER,

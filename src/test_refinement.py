@@ -17,16 +17,17 @@ def test_scaling_removal():
 def test_common_ingredient_info():
     test_cases = [
         # name, input_qty, expected_qty, expected_unit, expected_note
-        ("salt", None, 1.0, "g", "Default quantity assigned: 1.0 g"),
-        ("oil", None, 1.0, "ml", "Default quantity assigned: 1.0 ml"),
+        ("salt", None, 1.0, "g", "Default values assigned: 1.0 g"),
+        ("oil", None, 1.0, "ml", "Default values assigned: 1.0 ml"),
         ("saffron", None, None, None, "Adjusted to taste / standard requirement"),
         ("hing", None, None, None, "Adjusted to taste / standard requirement"),
         ("asafoetida", None, None, None, "Adjusted to taste / standard requirement"),
         ("curry leaves", None, None, None, "Adjusted to taste / standard requirement"),
-        ("ginger", None, 1.0, "g", "Default quantity assigned: 1.0 g"),
-        ("water", None, 1.0, "ml", "Default quantity assigned: 1.0 ml"),
-        ("fenugreek", None, 1.0, "g", "Default quantity assigned: 1.0 g"),
-        ("soy", None, 1.0, "ml", "Default quantity assigned: 1.0 ml")
+        ("curry leaves", 5.0, 5.0, "g", "Default values assigned: 5.0 g"),
+        ("ginger", None, 1.0, "g", "Default values assigned: 1.0 g"),
+        ("water", None, 1.0, "ml", "Default values assigned: 1.0 ml"),
+        ("fenugreek", None, 1.0, "g", "Default values assigned: 1.0 g"),
+        ("soy", None, 1.0, "ml", "Default values assigned: 1.0 ml")
     ]
     
     for name, qty, exp_qty, exp_unit, exp_note in test_cases:

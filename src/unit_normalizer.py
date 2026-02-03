@@ -141,14 +141,16 @@ def normalize_quantity_unit(
     exemptions = {"saffron", "hing", "asafoetida", "curry leaves"}
     is_exempt = any(ex in clean_name_lower for ex in exemptions)
 
-    if not is_exempt:
-        if quantity is None:
-            quantity = 1.0
-        if unit is None:
-            unit = "g" if category == "solid" else "ml"
-        
-        if note == "no conversion applied":
-            note = f"Default quantity assigned: {quantity} {unit}"
+    # If not exempt and quantity is missing, default to 1.0
+    if not is_exempt and quantity is None:
+        quantity = 1.0
+    
+    # If we have a quantity (either original or defaulted), ensure we have a unit
+    if quantity is not None and unit is None:
+        unit = "g" if category == "solid" else "ml"
+    
+    if note == "no conversion applied" and quantity is not None:
+        note = f"Default values assigned: {quantity} {unit}"
 
     # 🔥 Special Handling for Common Ingredients (Ensure info is never empty)
     if note == "no conversion applied" or not note:

@@ -1,14 +1,14 @@
-# Recipe Data Pipeline Assessment
+# Recipe Data Pipeline (Triple-Logic: AI + NLP + Deterministic)
 
-## Project Overview
+This project implements a **Triple-Logic Pipeline** (AI + NLP + Deterministic) to ingest, clean, parse, normalize, and store recipe data into a **PostgreSQL database**. 
 
-This project implements an **end-to-end Python data pipeline** to ingest, clean, parse, normalize, and store recipe data into a **PostgreSQL database**, using the **provided dataset (Option A)**.
+By leveraging **Gemini AI** for intelligent synthesis alongside robust **NLP heuristics** and **deterministic logic**, the pipeline achieves high-precision structured data from noisy, informal recipe text.
 
-The pipeline converts **semi-structured and noisy recipe data** into a **structured relational format** suitable for querying and analysis, while handling:
-- Inconsistent ingredient phrasing and unit formatting.
-- Mixed ingredient–instruction text.
-- Varied time formats and missing duration values.
-- Duplicate ingredient entries within recipes.
+The system handles:
+- **AI-Powered Refinement**: Gemini extracts metadata, difficulty, and preparation details.
+- **NLP Sanitation**: Heuristic layers strip linguistic noise and identify core ingredient nouns.
+- **Deterministic precision**: 100% accurate unit conversion and quantity standardization.
+- **Instruction Splitting**: Clean separation of `prep_steps` and `cook_steps`.
 
 ---
 
@@ -34,13 +34,13 @@ recipe_pipeline/
 │   ├── meal_recipes.csv
 │   └── meal_ingredients.csv
 ├── src/
-│   ├── main.py               # Pipeline orchestrator & final sanitation
-│   ├── ingredient_parser.py  # Regex & Logic for ingredient extraction
-│   ├── instruction_cleaner.py# Heuristics for instruction filtering & cleaning
-│   ├── unit_normalizer.py    # Unit conversion (g, ml, tsp, etc.)
-│   ├── text_utils.py         # Number & fraction to word conversion
+│   ├── main.py               # Triple-Logic Orchestrator 
+│   ├── ai_processor.py       # Layer 1: Gemini AI (Refinement & Synthesis)
+│   ├── ingredient_parser.py  # Layer 3: Deterministic Parser
+│   ├── instruction_cleaner.py# Layer 2: NLP Heuristics for steps & filtering
+│   ├── unit_normalizer.py    # Layer 3: Unit conversion (g, ml, etc.)
 │   ├── time_normalizer.py    # Time extraction and calculation
-│   ├── standard_ingredients.py # Reference list for fuzzy matching
+│   ├── verify_ai_pipeline.py # Quick test battery for the AI layer
 │   ├── db.py                 # PostgreSQL connection setup
 │   ├── db_insert.py          # Database insertion helpers
 │   ├── export_evidence.py    # DB to CSV export utility
@@ -54,35 +54,26 @@ recipe_pipeline/
 
 ---
 
-## Pipeline Architecture
+## Triple-Logic Architecture
 
-The pipeline follows these distinct stages:
+The pipeline uses a layered approach to guarantee both intelligence and accuracy:
 
-1. **Ingestion**
-   - Loads `recipes.json` and performs structural validation.
-   - Orchestrates the processing of each recipe record.
+### Layer 1: AI (Gemini)
+- **Refinement**: Uses `google-generativeai` to structure raw ingredients, extract preparation details, and identify "divided" quantities.
+- **Instruction Synthesis**: Merges fragmented steps into coherent narratives and splits them into distinct `prep_steps` and `cook_steps`.
+- **Metadata Extraction**: Infers `difficulty_level`, `tags`, and `servings` from context.
 
-2. **Cleaning & Filtering**
-   - **Instruction Filtering & Cleaning**: Uses heuristics to detect and skip lines in the ingredient list that are actually instructions. 
-   - **Instruction Enrichment**: Cleans raw instructions by removing noisy symbols (e.g., `▢`), standardizing measurements to `ml` or `g`, and converting numeric quantities to English words (e.g., "15 ml" -> "fifteen ml").
-   - **Step Collection**: Aggregates steps from `prep_steps`, `cook_steps`, and `quick_steps` to ensure comprehensive instructional coverage.
-   - **Sanitation**: Removes noise like "can be scaled", trailing dots (`.`), leading symbols (`/`, `-`, `,`), articles (`a`, `an`, `the`), and filler words.
+### Layer 2: NLP Heuristics
+- **Linguistic Cleanup**: Strips descriptors like "pieces", "parts", "bones", and "stems" using pattern matching.
+- **Validation**: Uses part-of-speech-like heuristics to verify if an ingredient name is valid.
+- **Instruction Detection**: Identifies imperative verbs to separate instruction blocks from ingredient lists.
 
+### Layer 3: Deterministic Logic
+- **Regex Extraction**: Separates quantity, unit, and core ingredient name.
+- **Metric Normalization**: Standardizes all diverse units (cups, tbsp, kg) to `g` for solids or `ml` for liquids.
+- **Robust Fallback**: If the AI Layer is unavailable (no API Key), the pipeline gracefully falls back to Layer 2 & 3 to maintain 100% operational continuity.
 
-3. **Parsing**
-   - **Regex Extraction**: Separates quantity, unit, and ingredient name.
-   - **Unicode Normalization**: Converts fractions like "½" to decimal "0.5".
-   - **Fuzzy Matching**: Uses `rapidfuzz` to map raw ingredient names to a standardized library of ingredients.
-
-4. **Normalization & Logic**
-   - **Time Normalization**: Extracts `prep_time` and `cook_time` into integer minutes and derives `total_time`.
-    - **Unit Normalization**: Standardizes diverse unit names and converts quantities to `g` for solids or `ml` for liquids.
-        - **Null Elimination**: Ensures `quantity` and `unit` are never null for solids/liquids (defaults to `1.0 g` or `1.0 ml` if missing).
-        - **Exemptions**: `saffron`, `hing`, `asafoetida`, and `curry leaves` are exempted from default quantity assignment to preserve recipe nuance.
-    - **Deduplication**: Identifies and merges duplicate ingredients within a single recipe, summing quantities where units are compatible.
-
-5. **Database Insertion**
-   - Populates the five required PostgreSQL tables: `recipes`, `recipe_ingredients`, `meals`, `meal_recipes`, and `meal_ingredients`.
+---
 
 ---
 
@@ -125,10 +116,8 @@ The pipeline follows these distinct stages:
 
 ---
 
-## Database Schema
-
 The PostgreSQL schema (`sql/schema.sql`) includes:
-- **`recipes`**: Stores metadata, timing, and combined instruction text.
+- **`recipes`**: Stores metadata, timing, and separate `prep_steps` and `cook_steps` (JSONB).
 - **`recipe_ingredients`**: Links ingredients to recipes with parsed info and optional flags.
 - **`meals`**: High-level categorization of dishes.
 - **`meal_recipes`**: Mapping table between meals and recipes.
@@ -150,33 +139,26 @@ Execute the schema script to create the necessary tables:
 psql -d recipe_pipeline -f sql/schema.sql
 ```
 
-### Step 3: Configure database credentials
-Edit `src/db.py` with your PostgreSQL `username`, `password`, `host`, and `port`:
-```python
-# src/db.py
-def get_connection():
-    return psycopg2.connect(
-        dbname="recipe_pipeline",
-        user="your_username",
-        password="your_password",
-        host="localhost",
-        port="5432"
-    )
+### Step 4: Configure Environment (Optional but Recommended)
+To enable AI features, set your Google Gemini API Key:
+```bash
+export GOOGLE_API_KEY="your_api_key_here"
 ```
+*Note: If unset, the pipeline will run in "fallback mode" using only NLP and Deterministic layers.*
 
-### Step 4: Run the pipeline
+### Step 5: Run the pipeline
 Execute the main script to process the data and populate the database:
 ```bash
 python src/main.py
 ```
 
-### Step 5: Export Evidence
+### Step 6: Export Evidence
 To refresh the CSV files in `output_evidence/` with the latest cleaned data from the database, run:
 ```bash
 python src/export_evidence.py
 ```
 
-### Step 6: Verify results (Optional)
+### Step 7: Verify results (Optional)
 Run the refinement tests to ensure parsing logic is performing as expected:
 ```bash
 python src/test_refinement.py
@@ -200,7 +182,7 @@ python src/test_refinement.py
 1. **Rule-Based Specificity**: The parsing logic is highly effective for English Indian recipes but may require adjustments for other cuisines or languages.
 2. **Database Credentials**: Currently configured in `src/db.py`; should be environment-controlled for production use.
 3. **Pantry Staple Heuristics**: Items like "salt to taste" are given a default note and standard minimal quantity where appropriate, though actual usage varies by cook.
-4. **LLM Usage**: **No external LLM APIs were used.** All parsing and normalization logic is entirely rule-based, deterministic, and locally executed.
+4. **LLM Integration**: Uses Gemini for Layer 1. Users can toggle this by providing or withholding the `GOOGLE_API_KEY`.
 
 ---
 

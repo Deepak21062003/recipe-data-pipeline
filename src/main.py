@@ -220,20 +220,23 @@ def process_recipe(recipe: dict) -> dict:
             if existing["unit"] == ing["unit"] and existing["quantity"] and ing["quantity"]:
                 existing["quantity"] += ing["quantity"]
 
-    # Final Instructions Synthesis (Split)
+    # Final Instructions Synthesis (Split & Summarized)
     final_prep_steps = ai_instruction_data.get("prep_steps", [])
     final_cook_steps = ai_instruction_data.get("cook_steps", [])
+    combined_instructions = ai_instruction_data.get("summary", "")
     
-    if not final_prep_steps and not final_cook_steps:
+    if not final_prep_steps and not final_cook_steps and not combined_instructions:
         # Fallback: Use cleaned original steps
         final_prep_steps = clean_instructions(prep_steps)
         final_cook_steps = clean_instructions(cook_steps) + clean_instructions(quick_steps)
-
-    # For the consolidated instructions field, join everything
-    combined_instructions = "\n".join(
-        [f"PREP: {s}" for s in final_prep_steps] + 
-        [f"COOK: {s}" for s in final_cook_steps]
-    )
+        
+        # Cleaner fallback formatting without repetitive prefixes
+        fallback_parts = []
+        if final_prep_steps:
+            fallback_parts.append("Preparation:\n" + "\n".join([f"- {s}" for s in final_prep_steps]))
+        if final_cook_steps:
+            fallback_parts.append("Cooking:\n" + "\n".join([f"- {s}" for s in final_cook_steps]))
+        combined_instructions = "\n\n".join(fallback_parts)
 
     return {
         "recipe_name": recipe.get("recipe_name"),

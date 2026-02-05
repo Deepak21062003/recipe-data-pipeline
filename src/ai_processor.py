@@ -67,19 +67,26 @@ def refine_ingredients(raw_ingredients: list) -> list:
 
 def synthesize_instructions(prep_steps: list, cook_steps: list, quick_steps: list) -> dict:
     """
-    Merges and formats steps into separate prep and cook steps.
+    Merges and formats steps into prep_steps, cook_steps, and a coherent summary.
     This is Layer 1 of the Triple-Logic Pipeline (AI).
     """
     if not model:
-        return {"prep_steps": [], "cook_steps": []}
+        return {"prep_steps": [], "cook_steps": [], "summary": ""}
 
     prompt = f"""
-    You are an expert food writer. Synthesize the following fragmented recipe steps into two clear, 
-    professionally written JSON arrays: "prep_steps" and "cook_steps".
+    You are an expert food writer. Process the following recipe steps into a structured JSON object.
     
+    EXPECTED JSON STRUCTURE:
+    {{
+        "prep_steps": ["list of preparation steps"],
+        "cook_steps": ["list of cooking steps"],
+        "summary": "A professional, coherent, and summarized single string of the entire recipe flow."
+    }}
+
     RULES:
-    - "prep_steps": Focus on preparation (cutting, marinating, measuring).
-    - "cook_steps": Focus on the actual cooking process (boiling, frying, baking).
+    - "prep_steps": List individual actions for prep (chopping, measuring, etc.).
+    - "cook_steps": List individual actions for cooking (boiling, frying, etc.).
+    - "summary": Combine everything into a clean, narrative-style multi-line string. Do NOT prefix every line with "PREP" or "COOK". Use logical flow.
     - Merge overlapping or redundant information.
     - Be clear and authoritative.
 
@@ -88,12 +95,12 @@ def synthesize_instructions(prep_steps: list, cook_steps: list, quick_steps: lis
     Cook Steps: {json.dumps(cook_steps)}
     Quick Steps: {json.dumps(quick_steps)}
 
-    Return ONLY a valid JSON object with the keys "prep_steps" and "cook_steps".
+    Return ONLY the valid JSON object.
     """
 
     response_text = _call_gemini(prompt)
     if not response_text:
-        return {"prep_steps": [], "cook_steps": []}
+        return {"prep_steps": [], "cook_steps": [], "summary": ""}
 
     response_text = re.sub(r'```json\s*|\s*```', '', response_text).strip()
 
@@ -101,7 +108,7 @@ def synthesize_instructions(prep_steps: list, cook_steps: list, quick_steps: lis
         return json.loads(response_text)
     except Exception as e:
         logger.error(f"Failed to parse AI synthesized instructions: {e}")
-        return {"prep_steps": [], "cook_steps": []}
+        return {"prep_steps": [], "cook_steps": [], "summary": ""}
 
 def extract_recipe_metadata(recipe_data: dict) -> dict:
     """

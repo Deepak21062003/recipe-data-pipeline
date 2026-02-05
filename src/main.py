@@ -152,7 +152,7 @@ def process_recipe(recipe: dict) -> dict:
     cook_steps = parse_steps(cook_steps)
     quick_steps = parse_steps(quick_steps)
 
-    ai_instructions = ai_processor.synthesize_instructions(prep_steps, cook_steps, quick_steps)
+    ai_instruction_data = ai_processor.synthesize_instructions(prep_steps, cook_steps, quick_steps)
     ai_ingredients = ai_processor.refine_ingredients(raw_ingredients)
     
     # --- LAYER 2 & 3: HYBRID PROCESSING ---
@@ -220,14 +220,27 @@ def process_recipe(recipe: dict) -> dict:
             if existing["unit"] == ing["unit"] and existing["quantity"] and ing["quantity"]:
                 existing["quantity"] += ing["quantity"]
 
-    final_instructions = ai_instructions if ai_instructions else "\n".join(
-        clean_instructions(prep_steps) + clean_instructions(quick_steps) + clean_instructions(cook_steps)
+    # Final Instructions Synthesis (Split)
+    final_prep_steps = ai_instruction_data.get("prep_steps", [])
+    final_cook_steps = ai_instruction_data.get("cook_steps", [])
+    
+    if not final_prep_steps and not final_cook_steps:
+        # Fallback: Use cleaned original steps
+        final_prep_steps = clean_instructions(prep_steps)
+        final_cook_steps = clean_instructions(cook_steps) + clean_instructions(quick_steps)
+
+    # For the consolidated instructions field, join everything
+    combined_instructions = "\n".join(
+        [f"PREP: {s}" for s in final_prep_steps] + 
+        [f"COOK: {s}" for s in final_cook_steps]
     )
 
     return {
         "recipe_name": recipe.get("recipe_name"),
         "ingredients": unique_ingredients,
-        "instructions": final_instructions,
+        "instructions": combined_instructions,
+        "prep_steps": final_prep_steps,
+        "cook_steps": final_cook_steps,
         "difficulty_level": ai_meta.get("difficulty_level"),
         "tags": ai_meta.get("tags"),
         "servings": ai_meta.get("servings"),

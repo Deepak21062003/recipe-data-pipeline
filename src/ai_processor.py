@@ -65,31 +65,43 @@ def refine_ingredients(raw_ingredients: list) -> list:
         logger.error(f"Failed to parse AI refined ingredients: {e}")
         return []
 
-def synthesize_instructions(prep_steps: list, cook_steps: list, quick_steps: list) -> str:
+def synthesize_instructions(prep_steps: list, cook_steps: list, quick_steps: list) -> dict:
     """
-    Merges and formats steps into coherent instructions.
+    Merges and formats steps into separate prep and cook steps.
     This is Layer 1 of the Triple-Logic Pipeline (AI).
     """
     if not model:
-        return ""
+        return {"prep_steps": [], "cook_steps": []}
 
     prompt = f"""
-    You are an expert food writer. Synthesize the following fragmented recipe steps into a clear, 
-    concise, and professionally numbered set of instructions.
+    You are an expert food writer. Synthesize the following fragmented recipe steps into two clear, 
+    professionally written JSON arrays: "prep_steps" and "cook_steps".
     
-    Instructions should:
-    - Flow logically from preparation to cooking to serving.
+    RULES:
+    - "prep_steps": Focus on preparation (cutting, marinating, measuring).
+    - "cook_steps": Focus on the actual cooking process (boiling, frying, baking).
     - Merge overlapping or redundant information.
     - Be clear and authoritative.
 
+    Raw Data:
     Prep Steps: {json.dumps(prep_steps)}
     Cook Steps: {json.dumps(cook_steps)}
     Quick Steps: {json.dumps(quick_steps)}
 
-    Return ONLY the final plain text instructions.
+    Return ONLY a valid JSON object with the keys "prep_steps" and "cook_steps".
     """
 
-    return _call_gemini(prompt)
+    response_text = _call_gemini(prompt)
+    if not response_text:
+        return {"prep_steps": [], "cook_steps": []}
+
+    response_text = re.sub(r'```json\s*|\s*```', '', response_text).strip()
+
+    try:
+        return json.loads(response_text)
+    except Exception as e:
+        logger.error(f"Failed to parse AI synthesized instructions: {e}")
+        return {"prep_steps": [], "cook_steps": []}
 
 def extract_recipe_metadata(recipe_data: dict) -> dict:
     """

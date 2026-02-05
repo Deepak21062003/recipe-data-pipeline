@@ -32,6 +32,8 @@ def verify_pipeline():
     print(f"Ingredient Count: {len(structured.get('ingredients', []))}")
     print(f"Difficulty Level: {structured.get('difficulty_level')} (AI: {bool(os.getenv('GOOGLE_API_KEY'))})")
     print(f"Instructions synthesized: {bool(structured.get('instructions'))}")
+    print(f"Prep Steps Count: {len(structured.get('prep_steps', []))}")
+    print(f"Cook Steps Count: {len(structured.get('cook_steps', []))}")
 
 if __name__ == "__main__":
     verify_pipeline()

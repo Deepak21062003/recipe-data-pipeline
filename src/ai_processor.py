@@ -13,7 +13,7 @@ if api_key:
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel('gemini-1.5-flash')
 else:
-    logger.warning("GOOGLE_API_KEY not found. AI features will be disabled (falling back to deterministic logic).")
+    # Local mode enabled by default - no warning needed
     model = None
 
 def _call_gemini(prompt: str) -> str:

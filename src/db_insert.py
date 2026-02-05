@@ -27,10 +27,10 @@ def insert_recipe(cur, recipe):
             recipe["prep_time_minutes"],
             recipe["cook_time_minutes"],
             recipe["total_time_minutes"],
-            None,
-            None,
-            None,
-            None
+            recipe.get("servings"),
+            recipe.get("difficulty_level"),
+            Json(recipe.get("tags", [])),
+            Json(recipe.get("metadata", {}))
         )
     )
     return cur.fetchone()[0]

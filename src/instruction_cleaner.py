@@ -105,23 +105,25 @@ def looks_like_instruction(text: str) -> bool:
 
     text_lower = text.lower().strip()
     
-    # Imperative verbs / common step starts
+    # Imperative verbs / common step starts (NLP Layer)
     if re.match(
         r'^(add|mix|stir|cook|boil|fry|pour|serve|make|heat|place|put|cover|garnish|transfer|blend|'
         r'roast|saute|sauté|set|cool|marinate|sprinkle|regulate|taste|peel|slice|chop|rinse|drain|'
         r'mash|prepare|gather|wash|clean|cut|dice|grate|mince|whisk|combine|fold|knead|roll|'
-        r'bake|steam|grill|simmer|toast|soak|dry|measure|arrange|top|pour|layer|chill|refrigerate|'
+        r'bake|steam|grill|simmer|toast|soak|dry|measure|arrange|top|layer|chill|refrigerate|'
         r'thaw|preheat|discard|remove|separate|press|squeeze|spread|brush|dip|coat|scoop|shape|'
-        r'wrap|tie|pierce|seal|invert|flip|turn|slide|transfer|pour|empty|break|crack|beat|'
+        r'wrap|tie|pierce|seal|invert|flip|turn|slide|empty|break|crack|beat|'
         r'sift|strain|blanch|sear|render|skimmer|deglaze|reduce|shred|hull|pit|trim|core|'
         r'zest|juice|quarter|halve|thinly|finely|roughly|well|slowly|carefully|immediately|'
-        r'once|when|after|while|before|until|during|then|next|finally)\b',
+        r'meanwhile|simultaneously|gradually|alternatively|strictly|roughly|once|when|after|while|before|until|during|then|next|finally|'
+        r'note|keep|let|allow|ensure|check|test|repeat|continue|start|stop|finish|avoid)\b',
         text_lower
     ):
 
         return True
 
-    if len(text.split()) > 5:
+    # NLP: If the sentence ends with a period and starts with a capital, and is long, it's likely an instruction.
+    if len(text.split()) > 4 and (text[0].isupper() or text[-1] == '.'):
         return True
 
     return False

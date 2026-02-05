@@ -15,6 +15,7 @@ from db_insert import (
     insert_meal_recipe,
     insert_meal_ingredients
 )
+import ai_processor
 
 # ------------------------------------
 # FINAL INGREDIENT VALIDATOR
@@ -43,54 +44,54 @@ def final_is_valid_ingredient(name: str) -> bool:
 # ------------------------------------
 def final_cleanup_ingredient_name(name: str) -> str:
     """
-    Absolute final cleanup.
-    Guarantees ONLY clean ingredient nouns.
+    NLP Layer: Absolute final cleanup.
+    Guarantees ONLY clean ingredient nouns by stripping adjectives and descriptors.
     """
     if not name:
         return ""
 
     name = name.lower()
 
-    # 1️⃣ Remove "recipe" or "recipes" noise
-    name = re.sub(r'\b(recipes?)\b', '', name)
+    # 1. Remove "recipe" or "recipes" or "scaled" noise
+    name = re.sub(r'\b(recipes?|can be scaled|about|approximately|roughly)\b', '', name)
 
-    # 1.1️⃣ Remove "can be scaled" noise
-    name = re.sub(r'\bcan\s+be\s+scaled\b', '', name)
+    # 2. Remove leading articles and pronouns
+    name = re.sub(r'^(a|an|the|any|some|few)\s+', '', name)
 
-    # 2️⃣ Remove leading articles
-    name = re.sub(r'^(a|an|the)\s+', '', name)
+    # 3. Remove ALL symbols anywhere
+    name = re.sub(r'[\\/,–—\(\)\[\]\{\}.\-:*]+', ' ', name)
 
-    # 3️⃣ Remove ALL symbols anywhere (enhanced)
-    # Put hyphen at the end to avoid creating a range (comma to en-dash swallowed letters!)
-    name = re.sub(r'[\\/,–—\(\)\[\]\{\}.\-]+', ' ', name)
-
-    # 4️⃣ Remove quantity / size words (dynamic)
+    # 4. Remove quantity / size / temperature adjectives (NLP heuristics)
     name = re.sub(
         r'\b(a\s+few|few|a\s+pinch|pinch|a\s+handful|handful|'
-        r'small|medium|large|medium\s+sized|large\s+sized)\b',
+        r'small|medium|large|medium\s+sized|large\s+sized|'
+        r'lukewarm|hot|cold|warm|ice\s+cold|chilled)\b',
         '',
         name
     )
 
-    # 5️⃣ Remove preparation/state words
+    # 5. Remove preparation/state words (NLP heuristics)
     name = re.sub(
         r'\b(whole|fresh|dried|raw|ripe|peeled|deseeded|'
-        r'chopped|cubed|sliced|minced|grated|crushed|boiled|fine|finely)\b',
+        r'chopped|cubed|sliced|minced|grated|crushed|boiled|fine|finely|'
+        r'roasted|toasted|fried|sauteed|sautéed|washed|cleaned|'
+        r'beaten|whisked|blended|mashed|pureed|puréed|'
+        r'pieces|parts|bones|bone\s+in|boneless|skinless|stems|stalks)\b',
         '',
         name
     )
 
-    # 6️⃣ Remove connectors
-    name = re.sub(r'\b(and|or|with)\b', '', name)
+    # 6. Remove connectors and miscellaneous noise
+    name = re.sub(r'\b(and|or|with|for|in|as|per|into|for|to|on|of)\b', '', name)
 
-    # 7️⃣ Collapse duplicate words
+    # 7. Collapse duplicate words
     tokens = []
     for w in name.split():
         if w not in tokens:
             tokens.append(w)
     name = " ".join(tokens)
 
-    # 8️⃣ Final whitespace cleanup
+    # 8. Final whitespace cleanup
     name = re.sub(r'\s+', ' ', name).strip()
 
     return name
@@ -110,135 +111,129 @@ def load_dataset():
 # ------------------------------------
 def infer_meal_type(recipe_name: str) -> str:
     name = recipe_name.lower()
-    if any(k in name for k in ["dosa", "idli", "poha", "upma"]):
+    if any(k in name for k in ["dosa", "idli", "poha", "upma", "pongal", "paratha"]):
         return "breakfast"
-    if any(k in name for k in ["rice", "biryani", "pulao"]):
+    if any(k in name for k in ["rice", "biryani", "pulao", "lunch"]):
         return "lunch"
     return "dinner"
 
 
 # ------------------------------------
-# PROCESS SINGLE RECIPE
+# PROCESS SINGLE RECIPE (TRIPLE-LOGIC)
 # ------------------------------------
 def process_recipe(recipe: dict) -> dict:
-    parsed_ingredients = []
+    """
+    Unified Triple-Logic Pipeline:
+    Layer 1: AI (Structuring & Enrichment)
+    Layer 2: NLP (Sanitizing & Filtering)
+    Layer 3: Deterministic (Standardizing & Logic)
+    """
+    
+    # --- LAYER 1: AI ---
+    ai_meta = ai_processor.extract_recipe_metadata(recipe)
+    
+    raw_ing_data = recipe.get("ingredients_json") or recipe.get("raw_ingredients") or "[]"
+    try:
+        raw_ingredients = json.loads(raw_ing_data) if isinstance(raw_ing_data, str) else raw_ing_data
+    except:
+        raw_ingredients = []
 
-    raw_ingredients = json.loads(recipe.get("ingredients_json", "[]"))
+    prep_steps = recipe.get("prep_steps") or recipe.get("preparation") or "[]"
+    cook_steps = recipe.get("cook_steps") or recipe.get("cooking") or "[]"
+    quick_steps = recipe.get("quick_steps") or recipe.get("summary_steps") or "[]"
+    
+    def parse_steps(s):
+        if isinstance(s, str):
+            try: return json.loads(s)
+            except: return []
+        return s if isinstance(s, list) else []
 
-    for item in raw_ingredients:
-        raw_name = item.get("name", "").lower().strip()
-        raw_qty = item.get("quantity", "").replace("▢", "").strip()
+    prep_steps = parse_steps(prep_steps)
+    cook_steps = parse_steps(cook_steps)
+    quick_steps = parse_steps(quick_steps)
 
-        if not raw_name or looks_like_instruction(raw_name):
-            continue
-
-        parsed = parse_ingredient(f"{raw_qty} {raw_name}".strip())
-
-        # 🔥 FINAL CLEANUP
-        clean_name = final_cleanup_ingredient_name(
-            parsed.get("ingredient_name", "")
-        )
-
-        if not final_is_valid_ingredient(clean_name):
-            continue
-
-        parsed["ingredient_name"] = clean_name
-
-        # Unit normalization
-        qty, unit, note = normalize_quantity_unit(
-            parsed.get("quantity"),
-            parsed.get("unit"),
-            clean_name
-        )
-
-        parsed["quantity"] = qty
-        parsed["unit"] = unit
-
-        if note:
-            parsed.setdefault("ingredient_info", {})
-            parsed["ingredient_info"]["unit_conversion"] = note
-
-        # MERGE DUPLICATES (Strict Name Deduplication)
-        found = False
-        for existing in parsed_ingredients:
-            if existing["ingredient_name"] == clean_name:
-                found = True
+    ai_instructions = ai_processor.synthesize_instructions(prep_steps, cook_steps, quick_steps)
+    ai_ingredients = ai_processor.refine_ingredients(raw_ingredients)
+    
+    # --- LAYER 2 & 3: HYBRID PROCESSING ---
+    processed_ingredients = []
+    
+    if ai_ingredients:
+        # Process AI-suggested ingredients through NLP & Deterministic filters
+        for ing in ai_ingredients:
+            # NLP Cleanup
+            clean_name = final_cleanup_ingredient_name(ing.get("ingredient_name", ""))
+            if not final_is_valid_ingredient(clean_name):
+                continue
                 
-                # Case 1: Exact unit match -> Sum
-                if existing["unit"] == unit:
-                    if existing["quantity"] is not None and qty is not None:
-                        existing["quantity"] += qty
-                    elif qty is not None:
-                         existing["quantity"] = qty
-                         
-                # Case 2: Existing has NO unit, New has unit -> Overwrite with New
-                elif existing["unit"] is None and unit is not None:
-                    existing["unit"] = unit
-                    existing["quantity"] = qty # Replace ambiguous qty with valid one
-                    if note: # Update conversion note
-                        existing.setdefault("ingredient_info", {})
-                        existing["ingredient_info"]["unit_conversion"] = note
+            # Deterministic Normalization
+            qty, unit, note = normalize_quantity_unit(
+                ing.get("quantity"),
+                ing.get("unit"),
+                clean_name
+            )
+            
+            ing["ingredient_name"] = clean_name
+            ing["quantity"] = qty
+            ing["unit"] = unit
+            if note:
+                ing.setdefault("ingredient_info", {})["unit_conversion"] = note
+            processed_ingredients.append(ing)
+    else:
+        # LLM Failed or Disabled -> Use Deterministic Fallback with NLP filtering
+        for item in raw_ingredients:
+            raw_name = item.get("name", "").lower().strip()
+            raw_qty = item.get("quantity", "").replace("▢", "").strip()
 
-                # Case 3: Existing has unit, New has NO unit -> Ignore New (assuming it's noise)
-                # Case 4: Mismatched units (e.g. g vs ml) -> Ignore New to enforce unique name
-                break
-        
-        if not found:
-             parsed_ingredients.append(parsed)
+            if not raw_name or looks_like_instruction(raw_name):
+                continue
 
-    prep_steps = json.loads(recipe.get("prep_steps", "[]"))
-    cook_steps = json.loads(recipe.get("cook_steps", "[]"))
-    quick_steps = json.loads(recipe.get("quick_steps", "[]"))
+            # Layer 3: Deterministic Parser
+            parsed = parse_ingredient(f"{raw_qty} {raw_name}".strip())
+            
+            # Layer 2: NLP Cleanup
+            clean_name = final_cleanup_ingredient_name(parsed.get("ingredient_name", ""))
 
-    # 🧼 Clean each part separately
-    clean_prep = clean_instructions(prep_steps)
-    clean_cook = clean_instructions(cook_steps)
-    clean_quick = clean_instructions(quick_steps)
+            if not final_is_valid_ingredient(clean_name):
+                continue
 
-    # 📝 Combine into labeled plain text
-    instructions_parts = []
-    
-    # If we have clean_quick but missing one of the others, or if it provides a better summary,
-    # we can append it. For now, let's treat quick_steps as a fallback or additional info.
-    # The user example shows "Banana Smoothie Bowl" has NO cook_steps and only prep/quick.
-    
-    if clean_prep:
-        instructions_parts.append("prep_step:")
-        instructions_parts.extend([f"- {step}" for step in clean_prep])
-    
-    if clean_quick:
-        # If we already have prep, add a spacer. 
-        # But wait, if quick_steps repeat prep, we might get duplicates. 
-        # For Smoothie Bowl: prep=["Peel and slice..."], quick=["Slice banana...", "Blend...", "Pour...", "Serve..."]
-        # De-duplication might be needed.
-        if instructions_parts:
-            instructions_parts.append("")
-        instructions_parts.append("quick_step:") # Adding a label for quick steps
-        instructions_parts.extend([f"- {step}" for step in clean_quick])
+            parsed["ingredient_name"] = clean_name
+            
+            # Layer 3: Final Normalization
+            qty, unit, note = normalize_quantity_unit(parsed.get("quantity"), parsed.get("unit"), clean_name)
+            parsed["quantity"] = qty
+            parsed["unit"] = unit
+            if note:
+                parsed.setdefault("ingredient_info", {})["unit_conversion"] = note
+            processed_ingredients.append(parsed)
 
-    if clean_cook:
-        if instructions_parts:
-            instructions_parts.append("") # Spacer
-        instructions_parts.append("cook_step:")
-        instructions_parts.extend([f"- {step}" for step in clean_cook])
+    # Deduplication & Final Synthesis
+    unique_ingredients = []
+    seen_names = {}
+    for ing in processed_ingredients:
+        name = ing["ingredient_name"]
+        if name not in seen_names:
+            seen_names[name] = ing
+            unique_ingredients.append(ing)
+        else:
+            existing = seen_names[name]
+            if existing["unit"] == ing["unit"] and existing["quantity"] and ing["quantity"]:
+                existing["quantity"] += ing["quantity"]
 
-    # If it's STILL empty, something is wrong with the filtering logic for this recipe
-    if not instructions_parts:
-        # Fallback: Just take prep/cook/quick without filtering if we ended up with nothing?
-        # No, better to see why it was filtered.
-        pass
-
-
-
-    instructions = "\n".join(instructions_parts)
+    final_instructions = ai_instructions if ai_instructions else "\n".join(
+        clean_instructions(prep_steps) + clean_instructions(quick_steps) + clean_instructions(cook_steps)
+    )
 
     return {
         "recipe_name": recipe.get("recipe_name"),
-        "ingredients": parsed_ingredients,
-        "instructions": instructions,
+        "ingredients": unique_ingredients,
+        "instructions": final_instructions,
+        "difficulty_level": ai_meta.get("difficulty_level"),
+        "tags": ai_meta.get("tags"),
+        "servings": ai_meta.get("servings"),
+        "metadata": ai_meta, 
         **normalize_times(recipe)
     }
-
 
 # ------------------------------------
 # MAIN PIPELINE

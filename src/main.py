@@ -233,9 +233,9 @@ def process_recipe(recipe: dict) -> dict:
         # Cleaner fallback formatting without repetitive prefixes
         fallback_parts = []
         if final_prep_steps:
-            fallback_parts.append("Preparation:\n" + "\n".join([f"- {s}" for s in final_prep_steps]))
+            fallback_parts.append("prep_steps:\n" + "\n".join([f"- {s}" for s in final_prep_steps]))
         if final_cook_steps:
-            fallback_parts.append("Cooking:\n" + "\n".join([f"- {s}" for s in final_cook_steps]))
+            fallback_parts.append("cook_steps:\n" + "\n".join([f"- {s}" for s in final_cook_steps]))
         combined_instructions = "\n\n".join(fallback_parts)
 
     return {

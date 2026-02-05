@@ -242,8 +242,6 @@ def process_recipe(recipe: dict) -> dict:
         "recipe_name": recipe.get("recipe_name"),
         "ingredients": unique_ingredients,
         "instructions": combined_instructions,
-        "prep_steps": final_prep_steps,
-        "cook_steps": final_cook_steps,
         "difficulty_level": ai_meta.get("difficulty_level"),
         "tags": ai_meta.get("tags"),
         "servings": ai_meta.get("servings"),

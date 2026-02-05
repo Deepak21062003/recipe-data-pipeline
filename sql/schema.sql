@@ -6,8 +6,6 @@ CREATE TABLE recipes (
     name TEXT NOT NULL,
     description TEXT,
     instructions TEXT NOT NULL,
-    prep_steps JSONB,
-    cook_steps JSONB,
     prep_time_minutes INTEGER,
     cook_time_minutes INTEGER,
     total_time_minutes INTEGER,

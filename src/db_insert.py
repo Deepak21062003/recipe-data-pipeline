@@ -9,8 +9,6 @@ def insert_recipe(cur, recipe):
             name,
             description,
             instructions,
-            prep_steps,
-            cook_steps,
             prep_time_minutes,
             cook_time_minutes,
             total_time_minutes,
@@ -19,15 +17,13 @@ def insert_recipe(cur, recipe):
             tags,
             metadata
         )
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         RETURNING id
         """,
         (
             recipe["recipe_name"],
             None,
             recipe["instructions"],
-            Json(recipe.get("prep_steps", [])),
-            Json(recipe.get("cook_steps", [])),
             recipe["prep_time_minutes"],
             recipe["cook_time_minutes"],
             recipe["total_time_minutes"],

@@ -55,12 +55,30 @@ def test_adaptive_hybrid():
         ]
     }
     
-    # Mock ambiguity resolution
+    # Mock ambiguity and classification
     original_resolve = ai_processor.resolve_ambiguity
+    original_classify = ai_processor.classify_steps
+    
     ai_processor.resolve_ambiguity = lambda name, context: {
         "suggestion": "garam masala" if name == "masala" else name,
         "confidence_score": 0.9,
         "reasoning": "Context mentions Garam Masala Chicken"
+    }
+    
+    ai_processor.classify_steps = lambda steps: {
+        "prep": ["Cut the chicken."],
+        "cook": ["Fry the chicken."],
+        "noise": ["Visit our site."]
+    }
+    
+    ambiguous_recipe = {
+        "recipe_name": "Garam Masala Chicken",
+        "raw_ingredients": [
+            {"name": "chicken", "quantity": "500g"},
+            {"name": "masala", "quantity": "1 tsp"}
+        ],
+        "prep_steps": ["Cut the chicken."],
+        "cook_steps": ["Fry the chicken.", "Visit our site."]
     }
     
     processed_amb = process_recipe(ambiguous_recipe)
@@ -68,11 +86,14 @@ def test_adaptive_hybrid():
     
     ingredients = [i["ingredient_name"] for i in processed_amb["ingredients"]]
     assert "garam masala" in ingredients
+    assert "Visit our site." not in processed_amb["instructions"]
+    assert "Fry the chicken." in processed_amb["instructions"]
     assert processed_amb["metadata"]["ai_assisted"] is True
-    print("\n✅ Layer 2 Verification Successful!")
+    print("\n✅ Layer 2 Verification (Disambiguation + Classification) Successful!")
     
     # Restore
     ai_processor.resolve_ambiguity = original_resolve
+    ai_processor.classify_steps = original_classify
 
 if __name__ == "__main__":
     test_adaptive_hybrid()

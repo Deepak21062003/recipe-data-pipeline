@@ -196,20 +196,20 @@ def process_recipe(recipe: dict) -> dict:
     for item in exception_queue:
         parsed = item["parsed"]
         
+        # ALLOWED LLM USAGE: Ingredient Entity Disambiguation
         if item["is_ambiguous"]:
             ai_res = ai_processor.resolve_ambiguity(parsed["ingredient_name"], recipe_context)
             if ai_res.get("confidence_score", 0) > 0.7:
                 parsed["ingredient_name"] = ai_res["suggestion"]
                 parsed["ai_refined"] = True
         
+        # PROHIBITED LLM USAGE: Simple quantity parsing/inference is handled deterministically
         if item["is_missing_qty"]:
-            ai_data = ai_processor.suggest_missing_data(parsed["ingredient_name"], recipe_context)
-            if ai_data.get("confidence_score", 0) > 0.7:
-                parsed["quantity"] = ai_data.get("quantity")
-                parsed["unit"] = ai_data.get("unit")
-                parsed["ai_filled"] = True
+            # Deterministic Fallback: Default to 1.0 if missing, instead of AI inference
+            parsed["quantity"] = 1.0 if not parsed.get("quantity") else parsed["quantity"]
+            parsed["unit"] = "unit" if not parsed.get("unit") else parsed["unit"]
 
-        # Final Deterministic Normalization of AI output
+        # Final Deterministic Normalization
         q, u, n = normalize_quantity_unit(parsed["quantity"], parsed["unit"], parsed["ingredient_name"])
         parsed["quantity"] = q
         parsed["unit"] = u
@@ -245,15 +245,23 @@ def process_recipe(recipe: dict) -> dict:
             except: return [s]
         return s if isinstance(s, list) else []
 
-    prep_steps = ensure_list(recipe.get("prep_steps") or recipe.get("preparation") or [])
-    cook_steps = ensure_list(recipe.get("cook_steps") or recipe.get("cooking") or [])
+    raw_prep = ensure_list(recipe.get("prep_steps") or recipe.get("preparation") or [])
+    raw_cook = ensure_list(recipe.get("cook_steps") or recipe.get("cooking") or [])
+    all_raw_steps = raw_prep + raw_cook
     
-    # Smart synthesis for instructions
-    ai_instruction_data = ai_processor.synthesize_instructions(prep_steps, cook_steps, [])
-    combined_instructions = ai_instruction_data.get("summary", "")
+    # ALLOWED LLM USAGE: Step Classification
+    # We classify the raw strings to clean noise and categorize correctly
+    ai_classification = ai_processor.classify_steps(all_raw_steps)
     
-    if not combined_instructions:
-        combined_instructions = "\n".join(clean_instructions(prep_steps) + clean_instructions(cook_steps))
+    final_prep = ai_classification.get("prep", [])
+    final_cook = ai_classification.get("cook", [])
+    
+    # Fallback if AI fails: Use deterministic cleaning
+    if not final_prep and not final_cook:
+        final_prep = clean_instructions(raw_prep)
+        final_cook = clean_instructions(raw_cook)
+
+    combined_instructions = "\n".join(final_prep + final_cook)
 
     return {
         "recipe_name": title,

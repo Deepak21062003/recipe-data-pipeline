@@ -1,6 +1,14 @@
 import json
 import os
 import re
+import csv
+import logging
+from typing import List, Dict, Optional
+import sys
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 from ingredient_parser import parse_ingredient
 from instruction_cleaner import clean_instructions, looks_like_instruction
@@ -123,91 +131,93 @@ def infer_meal_type(recipe_name: str) -> str:
 # ------------------------------------
 def process_recipe(recipe: dict) -> dict:
     """
-    Unified Triple-Logic Pipeline:
-    Layer 1: AI (Structuring & Enrichment)
-    Layer 2: NLP (Sanitizing & Filtering)
-    Layer 3: Deterministic (Standardizing & Logic)
+    Assessment-Aligned Adaptive Hybrid Pipeline:
+    Layer 0: Adaptive Mapping (AI-Based Format detection)
+    Layer 1: Deterministic Primary Flow (Regex/Rules)
+    Layer 2: Targeted AI Assistance (Exceptions Only)
+    Layer 3: Validation & Guardrails
     """
     
-    # --- LAYER 1: AI ---
-    ai_meta = ai_processor.extract_recipe_metadata(recipe)
+    # --- LAYER 0: ADAPTIVE MAPPING ---
+    # Trigger AI only if the expected schema is missing
+    is_adaptive = False
+    if not any(k in recipe for k in ["ingredients_json", "raw_ingredients", "recipe_name"]):
+        logger.info("Unknown data format detected. Invoking Layer 0 (Adaptive Mapping)...")
+        recipe = ai_processor.adaptive_map(recipe)
+        is_adaptive = True
+
+    title = recipe.get("recipe_name", "Unknown Recipe")
     
+    # --- LAYER 1: DETERMINISTIC PRIMARY FLOW ---
     raw_ing_data = recipe.get("ingredients_json") or recipe.get("raw_ingredients") or "[]"
     try:
         raw_ingredients = json.loads(raw_ing_data) if isinstance(raw_ing_data, str) else raw_ing_data
     except:
         raw_ingredients = []
 
-    prep_steps = recipe.get("prep_steps") or recipe.get("preparation") or "[]"
-    cook_steps = recipe.get("cook_steps") or recipe.get("cooking") or "[]"
-    quick_steps = recipe.get("quick_steps") or recipe.get("summary_steps") or "[]"
-    
-    def parse_steps(s):
-        if isinstance(s, str):
-            try: return json.loads(s)
-            except: return []
-        return s if isinstance(s, list) else []
-
-    prep_steps = parse_steps(prep_steps)
-    cook_steps = parse_steps(cook_steps)
-    quick_steps = parse_steps(quick_steps)
-
-    ai_instruction_data = ai_processor.synthesize_instructions(prep_steps, cook_steps, quick_steps)
-    ai_ingredients = ai_processor.refine_ingredients(raw_ingredients)
-    
-    # --- LAYER 2 & 3: HYBRID PROCESSING ---
     processed_ingredients = []
-    
-    if ai_ingredients:
-        # Process AI-suggested ingredients through NLP & Deterministic filters
-        for ing in ai_ingredients:
-            # NLP Cleanup
-            clean_name = final_cleanup_ingredient_name(ing.get("ingredient_name", ""))
-            if not final_is_valid_ingredient(clean_name):
-                continue
-                
-            # Deterministic Normalization
-            qty, unit, note = normalize_quantity_unit(
-                ing.get("quantity"),
-                ing.get("unit"),
-                clean_name
-            )
-            
-            ing["ingredient_name"] = clean_name
-            ing["quantity"] = qty
-            ing["unit"] = unit
-            if note:
-                ing.setdefault("ingredient_info", {})["unit_conversion"] = note
-            processed_ingredients.append(ing)
-    else:
-        # LLM Failed or Disabled -> Use Deterministic Fallback with NLP filtering
-        for item in raw_ingredients:
-            raw_name = item.get("name", "").lower().strip()
-            raw_qty = item.get("quantity", "").replace("▢", "").strip()
+    exception_queue = []
 
-            if not raw_name or looks_like_instruction(raw_name):
-                continue
+    for item in raw_ingredients:
+        raw_name = item.get("name", "").lower().strip()
+        raw_qty = item.get("quantity", "").replace("▢", "").strip()
 
-            # Layer 3: Deterministic Parser
-            parsed = parse_ingredient(f"{raw_qty} {raw_name}".strip())
-            
-            # Layer 2: NLP Cleanup
-            clean_name = final_cleanup_ingredient_name(parsed.get("ingredient_name", ""))
+        if not raw_name or looks_like_instruction(raw_name):
+            continue
 
-            if not final_is_valid_ingredient(clean_name):
-                continue
+        # Rule-based parsing
+        parsed = parse_ingredient(f"{raw_qty} {raw_name}".strip())
+        clean_name = final_cleanup_ingredient_name(parsed.get("ingredient_name", ""))
 
-            parsed["ingredient_name"] = clean_name
-            
-            # Layer 3: Final Normalization
-            qty, unit, note = normalize_quantity_unit(parsed.get("quantity"), parsed.get("unit"), clean_name)
+        if not final_is_valid_ingredient(clean_name):
+            continue
+
+        parsed["ingredient_name"] = clean_name
+        qty, unit, note = normalize_quantity_unit(parsed.get("quantity"), parsed.get("unit"), clean_name)
+        
+        # Uncertainty Detection (Trigger for Layer 2)
+        is_ambiguous = clean_name in {"masala", "spices", "seasoning", "powder", "mix"}
+        is_missing_qty = qty is None or (isinstance(qty, float) and qty <= 0)
+
+        if is_ambiguous or is_missing_qty:
+            exception_queue.append({
+                "parsed": parsed,
+                "is_ambiguous": is_ambiguous,
+                "is_missing_qty": is_missing_qty
+            })
+        else:
             parsed["quantity"] = qty
             parsed["unit"] = unit
-            if note:
-                parsed.setdefault("ingredient_info", {})["unit_conversion"] = note
             processed_ingredients.append(parsed)
 
-    # Deduplication & Final Synthesis
+    # --- LAYER 2: TARGETED AI ASSISTANCE ---
+    recipe_context = f"Recipe: {title}. Existing: {', '.join([i['ingredient_name'] for i in processed_ingredients])}"
+    
+    for item in exception_queue:
+        parsed = item["parsed"]
+        
+        if item["is_ambiguous"]:
+            ai_res = ai_processor.resolve_ambiguity(parsed["ingredient_name"], recipe_context)
+            if ai_res.get("confidence_score", 0) > 0.7:
+                parsed["ingredient_name"] = ai_res["suggestion"]
+                parsed["ai_refined"] = True
+        
+        if item["is_missing_qty"]:
+            ai_data = ai_processor.suggest_missing_data(parsed["ingredient_name"], recipe_context)
+            if ai_data.get("confidence_score", 0) > 0.7:
+                parsed["quantity"] = ai_data.get("quantity")
+                parsed["unit"] = ai_data.get("unit")
+                parsed["ai_filled"] = True
+
+        # Final Deterministic Normalization of AI output
+        q, u, n = normalize_quantity_unit(parsed["quantity"], parsed["unit"], parsed["ingredient_name"])
+        parsed["quantity"] = q
+        parsed["unit"] = u
+        
+        if final_is_valid_ingredient(parsed["ingredient_name"]):
+            processed_ingredients.append(parsed)
+
+    # Deduplication
     unique_ingredients = []
     seen_names = {}
     for ing in processed_ingredients:
@@ -220,32 +230,36 @@ def process_recipe(recipe: dict) -> dict:
             if existing["unit"] == ing["unit"] and existing["quantity"] and ing["quantity"]:
                 existing["quantity"] += ing["quantity"]
 
-    # Final Instructions Synthesis (Split & Summarized)
-    final_prep_steps = ai_instruction_data.get("prep_steps", [])
-    final_cook_steps = ai_instruction_data.get("cook_steps", [])
+    # --- LAYER 3: VALIDATION & GUARDRAILS ---
+    # Final metadata check
+    metadata = {
+        "ai_assisted": len(exception_queue) > 0 or is_adaptive,
+        "uncertainty_rate": round(len(exception_queue) / max(len(raw_ingredients), 1), 2),
+        "source_format": "adaptive_mapped" if is_adaptive else "standard"
+    }
+
+    # Instruction Logic
+    def ensure_list(s):
+        if isinstance(s, str):
+            try: return json.loads(s)
+            except: return [s]
+        return s if isinstance(s, list) else []
+
+    prep_steps = ensure_list(recipe.get("prep_steps") or recipe.get("preparation") or [])
+    cook_steps = ensure_list(recipe.get("cook_steps") or recipe.get("cooking") or [])
+    
+    # Smart synthesis for instructions
+    ai_instruction_data = ai_processor.synthesize_instructions(prep_steps, cook_steps, [])
     combined_instructions = ai_instruction_data.get("summary", "")
     
-    if not final_prep_steps and not final_cook_steps and not combined_instructions:
-        # Fallback: Use cleaned original steps
-        final_prep_steps = clean_instructions(prep_steps)
-        final_cook_steps = clean_instructions(cook_steps) + clean_instructions(quick_steps)
-        
-        # Cleaner fallback formatting without repetitive prefixes
-        fallback_parts = []
-        if final_prep_steps:
-            fallback_parts.append("prep_steps:\n" + "\n".join([f"- {s}" for s in final_prep_steps]))
-        if final_cook_steps:
-            fallback_parts.append("cook_steps:\n" + "\n".join([f"- {s}" for s in final_cook_steps]))
-        combined_instructions = "\n\n".join(fallback_parts)
+    if not combined_instructions:
+        combined_instructions = "\n".join(clean_instructions(prep_steps) + clean_instructions(cook_steps))
 
     return {
-        "recipe_name": recipe.get("recipe_name"),
+        "recipe_name": title,
         "ingredients": unique_ingredients,
         "instructions": combined_instructions,
-        "difficulty_level": ai_meta.get("difficulty_level"),
-        "tags": ai_meta.get("tags"),
-        "servings": ai_meta.get("servings"),
-        "metadata": ai_meta, 
+        "metadata": metadata,
         **normalize_times(recipe)
     }
 

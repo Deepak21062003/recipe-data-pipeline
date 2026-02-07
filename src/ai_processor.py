@@ -4,6 +4,7 @@ import json
 import logging
 import re
 from dotenv import load_dotenv
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception
 
 # Load environment variables
 load_dotenv()
@@ -21,6 +22,16 @@ else:
     logger.warning("GOOGLE_API_KEY not found. AI features will be disabled (falling back to deterministic logic).")
     client = None
 
+def is_retryable_error(exception):
+    """Retry on 429 Resource Exhausted."""
+    return "429" in str(exception)
+
+@retry(
+    retry=retry_if_exception(is_retryable_error),
+    wait=wait_exponential(multiplier=1, min=4, max=10),
+    stop=stop_after_attempt(3),
+    reraise=True
+)
 def _call_gemini(prompt: str) -> str:
     if not client:
         return ""

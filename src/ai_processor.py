@@ -3,6 +3,10 @@ import os
 import json
 import logging
 import re
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -12,7 +16,7 @@ logger = logging.getLogger(__name__)
 api_key = os.getenv("GOOGLE_API_KEY")
 if api_key:
     client = genai.Client(api_key=api_key)
-    MODEL_ID = 'gemini-1.5-flash'
+    MODEL_ID = 'gemini-2.0-flash'
 else:
     logger.warning("GOOGLE_API_KEY not found. AI features will be disabled (falling back to deterministic logic).")
     client = None

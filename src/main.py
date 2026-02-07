@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 from ingredient_parser import parse_ingredient
 from instruction_cleaner import clean_instructions, looks_like_instruction
-from time_normalizer import normalize_times
+from normalizers import normalize_times
 from unit_normalizer import normalize_quantity_unit
 
 from db import get_connection
@@ -24,6 +24,7 @@ from db_insert import (
     insert_meal_ingredients
 )
 import ai_processor
+from normalizers import normalize_times, extract_servings
 
 # ------------------------------------
 # FINAL INGREDIENT VALIDATOR
@@ -263,12 +264,17 @@ def process_recipe(recipe: dict) -> dict:
 
     combined_instructions = "\n".join(final_prep + final_cook)
 
+    # --- EXTRACT METADATA (DETERMINISTIC) ---
+    servings = extract_servings(recipe.get("servings") or recipe.get("yield") or recipe.get("serves"))
+    times = normalize_times(recipe)
+
     return {
         "recipe_name": title,
         "ingredients": unique_ingredients,
         "instructions": combined_instructions,
         "metadata": metadata,
-        **normalize_times(recipe)
+        "servings": servings,
+        **times
     }
 
 # ------------------------------------

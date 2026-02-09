@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 api_key = os.getenv("GOOGLE_API_KEY")
 if api_key:
     client = genai.Client(api_key=api_key)
-    MODEL_ID = "gemini-1.5-flash"
+    MODEL_ID = "gemini-flash-latest"
 else:
     logger.warning("GOOGLE_API_KEY not found. AI features will be disabled (falling back to deterministic logic).")
     client = None

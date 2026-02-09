@@ -2,6 +2,7 @@ import re
 from typing import Dict, Optional
 from rapidfuzz import process, fuzz
 from standard_ingredients import STANDARD_INGREDIENTS
+from text_utils import universal_clean
 
 # -----------------------------
 # Constants
@@ -101,13 +102,15 @@ def clean_ingredient_name(text: str) -> str:
     for p in PREPARATION_WORDS:
         text = text.replace(p, "")
 
-    text = re.sub(r'\(.*?\)', '', text)
-    text = re.sub(r'\s+', ' ', text)
-    text = text.strip()
+    # Remove noise before fuzzy matching for better accuracy
+    search_text = universal_clean(text)
+    
+    # Also remove numbers specifically if they survived
+    search_text = re.sub(r'\d+(\.\d+)?', '', search_text).strip()
 
     # Fuzzy matching against standard ingredients
     best_match = process.extractOne(
-        text,
+        search_text,
         STANDARD_INGREDIENTS,
         scorer=fuzz.WRatio
     )
@@ -117,7 +120,7 @@ def clean_ingredient_name(text: str) -> str:
         if score >= 80:
             return match
 
-    return text
+    return search_text
 
 
 # -----------------------------

@@ -1,3 +1,24 @@
+import re
+
+# Centralized noise and preparation words for consistent cleaning
+NOISE_WORDS = r'\b(messy|ugly|dirty|old|new|freshly|locally|organic|natural|pure|original|quality|premium|best|good|extra|super|ultra|with|bones|bone\s+in|boneless|skinless|stems|stalks|pieces|parts|recipes?|can be scaled|about|approximately|roughly|a\s+few|few|a\s+pinch|pinch|a\s+handful|handful|small|medium|large|medium\s+sized|large\s+sized|lukewarm|hot|cold|warm|ice\s+cold|chilled|whole|fresh|dried|raw|ripe|peeled|deseeded|chopped|cubed|sliced|minced|grated|crushed|boiled|fine|finely|roasted|toasted|fried|sauteed|sautéed|washed|cleaned|beaten|whisked|blended|mashed|pureed|puréed|and|or|for|in|as|per|into|on|of|to)\b'
+
+def universal_clean(text: str) -> str:
+    if not text: return ""
+    text = text.lower()
+    # Remove articles
+    text = re.sub(r'^(a|an|the|any|some|few)\s+', '', text)
+    # Remove all symbols
+    text = re.sub(r'[\\/,–—\(\)\[\]\{\}.\-:*]+', ' ', text)
+    # Remove noise words
+    text = re.sub(NOISE_WORDS, '', text)
+    # Deduplicate tokens
+    tokens = []
+    for w in text.split():
+        if w not in tokens:
+            tokens.append(w)
+    return " ".join(tokens).strip()
+
 def number_to_words(n):
     """
     Simple converter for numbers to English words.

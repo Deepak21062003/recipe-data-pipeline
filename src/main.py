@@ -12,8 +12,9 @@ logger = logging.getLogger(__name__)
 
 from ingredient_parser import parse_ingredient
 from instruction_cleaner import clean_instructions, looks_like_instruction
-from normalizers import normalize_times
+from normalizers import normalize_times, extract_servings
 from unit_normalizer import normalize_quantity_unit
+from text_utils import universal_clean
 
 from db import get_connection
 from db_insert import (
@@ -53,57 +54,9 @@ def final_is_valid_ingredient(name: str) -> bool:
 # ------------------------------------
 def final_cleanup_ingredient_name(name: str) -> str:
     """
-    NLP Layer: Absolute final cleanup.
-    Guarantees ONLY clean ingredient nouns by stripping adjectives and descriptors.
+    NLP Layer: Absolute final cleanup using universal utility.
     """
-    if not name:
-        return ""
-
-    name = name.lower()
-
-    # 1. Remove "recipe" or "recipes" or "scaled" noise
-    name = re.sub(r'\b(recipes?|can be scaled|about|approximately|roughly)\b', '', name)
-
-    # 2. Remove leading articles and pronouns
-    name = re.sub(r'^(a|an|the|any|some|few)\s+', '', name)
-
-    # 3. Remove ALL symbols anywhere
-    name = re.sub(r'[\\/,–—\(\)\[\]\{\}.\-:*]+', ' ', name)
-
-    # 4. Remove quantity / size / temperature adjectives (NLP heuristics)
-    name = re.sub(
-        r'\b(a\s+few|few|a\s+pinch|pinch|a\s+handful|handful|'
-        r'small|medium|large|medium\s+sized|large\s+sized|'
-        r'lukewarm|hot|cold|warm|ice\s+cold|chilled)\b',
-        '',
-        name
-    )
-
-    # 5. Remove preparation/state words (NLP heuristics)
-    name = re.sub(
-        r'\b(whole|fresh|dried|raw|ripe|peeled|deseeded|'
-        r'chopped|cubed|sliced|minced|grated|crushed|boiled|fine|finely|'
-        r'roasted|toasted|fried|sauteed|sautéed|washed|cleaned|'
-        r'beaten|whisked|blended|mashed|pureed|puréed|'
-        r'pieces|parts|bones|bone\s+in|boneless|skinless|stems|stalks)\b',
-        '',
-        name
-    )
-
-    # 6. Remove connectors and miscellaneous noise
-    name = re.sub(r'\b(and|or|with|for|in|as|per|into|for|to|on|of)\b', '', name)
-
-    # 7. Collapse duplicate words
-    tokens = []
-    for w in name.split():
-        if w not in tokens:
-            tokens.append(w)
-    name = " ".join(tokens)
-
-    # 8. Final whitespace cleanup
-    name = re.sub(r'\s+', ' ', name).strip()
-
-    return name
+    return universal_clean(name)
 
 
 # ------------------------------------

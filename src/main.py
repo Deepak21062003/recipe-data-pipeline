@@ -311,7 +311,7 @@ def main():
         
         # Pacing: Respect API rate limits (Free tier ~15 RPM)
         if structured.get("metadata", {}).get("ai_assisted"):
-            time.sleep(2)
+            time.sleep(5)
 
     conn.commit()
     cur.close()

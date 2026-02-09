@@ -1,4 +1,4 @@
-from google import genai
+import google.generativeai as genai
 import os
 import json
 import logging
@@ -15,34 +15,24 @@ logger = logging.getLogger(__name__)
 # Configure Gemini
 api_key = os.getenv("GOOGLE_API_KEY")
 if api_key:
-    client = genai.Client(api_key=api_key)
-    MODEL_ID = "gemini-1.5-flash"
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel('gemini-1.5-flash')
 else:
     logger.warning("GOOGLE_API_KEY not found. AI features will be disabled (falling back to deterministic logic).")
-    client = None
+    model = None
 
 def _call_gemini(prompt: str) -> str:
-    if not client:
+    if not model:
         return ""
     try:
-        response = client.models.generate_content(
-            model=MODEL_ID,
-            contents=prompt
-        )
+        response = model.generate_content(prompt)
         return response.text.strip()
     except Exception as e:
         logger.error(f"Error calling Gemini: {e}")
         return ""
 
-# --- ALLOWED LLM USAGE: Ingredient Entity Disambiguation ---
-
 def resolve_ambiguity(ingredient_name: str, recipe_context: str) -> dict:
-    """
-    LLM TASK: Ingredient Entity Disambiguation.
-    Resolves generic names (e.g., 'masala') to specific entities based on context.
-    Regex cannot solve this as it requires semantic understanding of the recipe cuisine/title.
-    """
-    if not client:
+    if not model:
         return {"suggestion": ingredient_name, "confidence_score": 0.0}
 
     prompt = f"""
@@ -64,15 +54,8 @@ def resolve_ambiguity(ingredient_name: str, recipe_context: str) -> dict:
     except:
         return {"suggestion": ingredient_name, "confidence_score": 0.0}
 
-# --- ALLOWED LLM USAGE: Step Classification ---
-
 def adaptive_map(raw_data: dict) -> dict:
-    """
-    LLM TASK: Field Classification.
-    Identifies which keys in an unknown schema represent 'ingredients' and 'instructions'.
-    Regex is insufficient because key names are arbitrary across different datasets.
-    """
-    if not client:
+    if not model:
         return raw_data
 
     prompt = f"""
@@ -91,13 +74,7 @@ def adaptive_map(raw_data: dict) -> dict:
         return raw_data
 
 def classify_steps(raw_steps: list) -> dict:
-    """
-    LLM TASK: Step Classification.
-    Categorizes raw strings into 'prep', 'cook', or 'noise'.
-    Regex is insufficient as it cannot distinguish 'Cut the chicken' (prep) 
-    from 'Fry the chicken' (cook) reliably without semantic analysis.
-    """
-    if not client:
+    if not model:
         return {"prep": [], "cook": [], "noise": []}
 
     prompt = f"""
@@ -119,11 +96,6 @@ def classify_steps(raw_steps: list) -> dict:
         return {"prep": [], "cook": [], "noise": []}
 
 def summarize_steps(prep_steps: list, cook_steps: list) -> str:
-    """
-    LLM TASK: Instruction Summarization.
-    Converts raw steps into a professional, concise summary with clear headers.
-    """
-    # Defensive check: if no input, return empty
     if not prep_steps and not cook_steps:
         return ""
 
@@ -133,17 +105,17 @@ def summarize_steps(prep_steps: list, cook_steps: list) -> str:
         fallback_res.extend([f"- {s}" for s in prep_steps])
     if cook_steps:
         if fallback_res: fallback_res.append("")
-        fallback_res.append("cook_steps:")
+        fallback_res.append("quick_steps:")
         fallback_res.extend([f"- {s}" for s in cook_steps])
     
     fallback_string = "\n".join(fallback_res)
 
-    if not client:
+    if not model:
         return fallback_string
 
     prompt = f"""
     You are a professional chef. Summarize the following recipe steps into two clear and concise sections: 
-    "Prep_steps" and "Cook_steps". 
+    "prep_steps" and "quick_steps". 
     
     Rules:
     1. Combine multiple small actions into single, logical summarized steps.
@@ -157,28 +129,18 @@ def summarize_steps(prep_steps: list, cook_steps: list) -> str:
     prep_steps:
     - [Summarized point]
     
-    cook_steps:
+    quick_steps:
     - [Summarized point]
     """
     ai_response = _call_gemini(prompt)
-    
-    # Final Guardrail: If AI returned nothing or just whitespace, use fallback
     if not ai_response or not ai_response.strip():
-        logger.warning("AI summarization returned empty response. Using deterministic fallback.")
         return fallback_string
-        
     return ai_response
 
 def draft_instructions(title: str, ingredients: list) -> dict:
-    """
-    LLM TASK: Instruction Drafting.
-    Generates realistic preparation and cooking steps when source data is empty.
-    Returns: {"prep_steps": [...], "cook_steps": [...]}
-    """
-    if not client:
-        return {"prep_steps": ["[No instructions found]"], "cook_steps": ["[No instructions found]"]}
+    if not model:
+        return {"prep_steps": ["[No instructions found]"], "quick_steps": ["[No instructions found]"]}
 
-    # Format ingredients for context
     ings_text = ", ".join([i.get('ingredient_name', '') for i in ingredients])
 
     prompt = f"""
@@ -189,17 +151,21 @@ def draft_instructions(title: str, ingredients: list) -> dict:
     
     Based on these, draft a realistic, professional, and concise 2-section guide.
     1. "prep_steps": Focus on washing, chopping, and measuring.
-    2. "cook_steps": Focus on the actual cooking, assembling, or serving.
+    2. "quick_steps": Focus on the actual cooking, assembling, or serving.
     
-    Return ONLY JSON:
+    Format exactly as:
     {{
         "prep_steps": ["step1", ...],
-        "cook_steps": ["step2", ...]
+        "quick_steps": ["step2", ...]
     }}
     """
     response_text = _call_gemini(prompt)
     response_text = re.sub(r'```json\s*|\s*```', '', response_text).strip()
     try:
-        return json.loads(response_text)
+        data = json.loads(response_text)
+        return {
+            "prep_steps": data.get("prep_steps", []),
+            "quick_steps": data.get("quick_steps", data.get("cook_steps", []))
+        }
     except:
-        return {"prep_steps": ["[Drafting failed]"], "cook_steps": ["[Drafting failed]"]}
+        return {"prep_steps": ["[Drafting failed]"], "quick_steps": ["[Drafting failed]"]}

@@ -235,7 +235,7 @@ def process_recipe(recipe: dict) -> dict:
         # ALLOWED LLM USAGE: Content Generation for Empty Sources
         drafted = ai_processor.draft_instructions(title, unique_ingredients)
         final_prep = drafted.get("prep_steps", [])
-        final_cook = drafted.get("cook_steps", [])
+        final_cook = drafted.get("quick_steps", [])
         is_drafted = True
         metadata["ai_generated_instructions"] = True
         metadata["ai_assisted"] = True

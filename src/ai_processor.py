@@ -119,11 +119,11 @@ def summarize_steps(prep_steps: list, cook_steps: list) -> str:
         # Fallback: Simple structured joining
         res = []
         if prep_steps:
-            res.append("Prep_steps:")
+            res.append("prep_steps:")
             res.extend([f"- {s}" for s in prep_steps])
         if cook_steps:
             if res: res.append("")
-            res.append("Cook_steps:")
+            res.append("cook_steps:")
             res.extend([f"- {s}" for s in cook_steps])
         return "\n".join(res)
 
@@ -140,21 +140,22 @@ def summarize_steps(prep_steps: list, cook_steps: list) -> str:
     Raw Cook: {json.dumps(cook_steps)}
     
     Format exactly as:
-    Prep_steps:
+    prep_steps:
     - [Summarized point]
     
-    Cook_steps:
+    cook_steps:
     - [Summarized point]
     """
     return _call_gemini(prompt)
 
-def draft_instructions(title: str, ingredients: list) -> str:
+def draft_instructions(title: str, ingredients: list) -> dict:
     """
     LLM TASK: Instruction Drafting.
     Generates realistic preparation and cooking steps when source data is empty.
+    Returns: {"prep_steps": [...], "cook_steps": [...]}
     """
     if not model:
-        return "Prep_steps:\n- [No instructions found]\n\nCook_steps:\n- [No instructions found]"
+        return {"prep_steps": ["[No instructions found]"], "cook_steps": ["[No instructions found]"]}
 
     # Format ingredients for context
     ings_text = ", ".join([i.get('ingredient_name', '') for i in ingredients])
@@ -166,14 +167,18 @@ def draft_instructions(title: str, ingredients: list) -> str:
     Ingredients: {ings_text}
     
     Based on these, draft a realistic, professional, and concise 2-section guide.
-    1. "Prep_steps": Focus on washing, chopping, and measuring.
-    2. "Cook_steps": Focus on the actual cooking, assembling, or serving.
+    1. "prep_steps": Focus on washing, chopping, and measuring.
+    2. "cook_steps": Focus on the actual cooking, assembling, or serving.
     
-    Format exactly as:
-    Prep_steps:
-    - [Professional step]
-    
-    Cook_steps:
-    - [Professional step]
+    Return ONLY JSON:
+    {{
+        "prep_steps": ["step1", ...],
+        "cook_steps": ["step2", ...]
+    }}
     """
-    return _call_gemini(prompt)
+    response_text = _call_gemini(prompt)
+    response_text = re.sub(r'```json\s*|\s*```', '', response_text).strip()
+    try:
+        return json.loads(response_text)
+    except:
+        return {"prep_steps": ["[Drafting failed]"], "cook_steps": ["[Drafting failed]"]}

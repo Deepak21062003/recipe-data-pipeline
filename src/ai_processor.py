@@ -16,17 +16,13 @@ logger = logging.getLogger(__name__)
 api_key = os.getenv("GOOGLE_API_KEY")
 if api_key:
     client = genai.Client(api_key=api_key)
-    MODEL_ID = "gemini-flash-latest"
+    MODEL_ID = "gemini-1.5-flash"
 else:
     logger.warning("GOOGLE_API_KEY not found. AI features will be disabled (falling back to deterministic logic).")
     client = None
 
-# Session state for AI availability
-_quota_exceeded = False
-
 def _call_gemini(prompt: str) -> str:
-    global _quota_exceeded
-    if not client or _quota_exceeded:
+    if not client:
         return ""
     try:
         response = client.models.generate_content(
@@ -35,12 +31,7 @@ def _call_gemini(prompt: str) -> str:
         )
         return response.text.strip()
     except Exception as e:
-        error_msg = str(e).upper()
-        if "429" in error_msg or "RESOURCE_EXHAUSTED" in error_msg:
-            logger.warning("AI Quota exhausted (429). Falling back to deterministic logic for this session.")
-            _quota_exceeded = True
-        else:
-            logger.error(f"Error calling Gemini: {e}")
+        logger.error(f"Error calling Gemini: {e}")
         return ""
 
 # --- ALLOWED LLM USAGE: Ingredient Entity Disambiguation ---
@@ -51,7 +42,7 @@ def resolve_ambiguity(ingredient_name: str, recipe_context: str) -> dict:
     Resolves generic names (e.g., 'masala') to specific entities based on context.
     Regex cannot solve this as it requires semantic understanding of the recipe cuisine/title.
     """
-    if not client or _quota_exceeded:
+    if not client:
         return {"suggestion": ingredient_name, "confidence_score": 0.0}
 
     prompt = f"""
@@ -81,7 +72,7 @@ def adaptive_map(raw_data: dict) -> dict:
     Identifies which keys in an unknown schema represent 'ingredients' and 'instructions'.
     Regex is insufficient because key names are arbitrary across different datasets.
     """
-    if not client or _quota_exceeded:
+    if not client:
         return raw_data
 
     prompt = f"""
@@ -106,7 +97,7 @@ def classify_steps(raw_steps: list) -> dict:
     Regex is insufficient as it cannot distinguish 'Cut the chicken' (prep) 
     from 'Fry the chicken' (cook) reliably without semantic analysis.
     """
-    if not client or _quota_exceeded:
+    if not client:
         return {"prep": [], "cook": [], "noise": []}
 
     prompt = f"""
@@ -132,7 +123,7 @@ def summarize_steps(prep_steps: list, cook_steps: list) -> str:
     LLM TASK: Instruction Summarization.
     Converts raw steps into a professional, concise summary with clear headers.
     """
-    if not client or _quota_exceeded or (not prep_steps and not cook_steps):
+    if not client or (not prep_steps and not cook_steps):
         # Fallback: Simple structured joining
         res = []
         if prep_steps:
@@ -171,7 +162,7 @@ def draft_instructions(title: str, ingredients: list) -> dict:
     Generates realistic preparation and cooking steps when source data is empty.
     Returns: {"prep_steps": [...], "cook_steps": [...]}
     """
-    if not client or _quota_exceeded:
+    if not client:
         return {"prep_steps": ["[No instructions found]"], "cook_steps": ["[No instructions found]"]}
 
     # Format ingredients for context
@@ -198,4 +189,4 @@ def draft_instructions(title: str, ingredients: list) -> dict:
     try:
         return json.loads(response_text)
     except:
-        return {"prep_steps": [], "cook_steps": []}
+        return {"prep_steps": ["[Drafting failed]"], "cook_steps": ["[Drafting failed]"]}

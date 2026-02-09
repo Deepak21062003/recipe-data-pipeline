@@ -22,8 +22,7 @@ from db_insert import (
     insert_recipe_ingredients,
     insert_meal,
     insert_meal_recipe,
-    insert_meal_ingredients,
-    get_existing_recipe_names
+    insert_meal_ingredients
 )
 import ai_processor
 from normalizers import normalize_times, extract_servings
@@ -264,52 +263,31 @@ def main():
     data = load_dataset()
     conn = get_connection()
     cur = conn.cursor()
-    
-    # Idempotency: Get already processed recipes
-    existing_recipes = get_existing_recipe_names(cur)
-    logger.info(f"Loaded {len(existing_recipes)} existing recipes. Skipping duplicates.")
-    
     seen = set()
-    inserted_count = 0
 
     for recipe in data:
         name = recipe.get("recipe_name")
-        if not name or name in seen or name in existing_recipes:
-            if name in existing_recipes:
-                logger.debug(f"Skipping already inserted recipe: {name}")
+        if not name or name in seen:
             continue
         seen.add(name)
 
-        try:
-            structured = process_recipe(recipe)
-            recipe_id = insert_recipe(cur, structured)
+        structured = process_recipe(recipe)
+        recipe_id = insert_recipe(cur, structured)
 
-            insert_recipe_ingredients(cur, recipe_id, structured["ingredients"])
+        insert_recipe_ingredients(cur, recipe_id, structured["ingredients"])
 
-            meal_id = insert_meal(cur, {
-                "name": f"{name} Meal",
-                "meal_type": infer_meal_type(name),
-                "total_time_minutes": structured["total_time_minutes"]
-            })
+        meal_id = insert_meal(cur, {
+            "name": f"{name} Meal",
+            "meal_type": infer_meal_type(name),
+            "total_time_minutes": structured["total_time_minutes"]
+        })
 
-            insert_meal_recipe(cur, meal_id, recipe_id, name)
-            insert_meal_ingredients(cur, meal_id, structured["ingredients"])
+        insert_meal_recipe(cur, meal_id, recipe_id, name)
+        insert_meal_ingredients(cur, meal_id, structured["ingredients"])
 
-            inserted_count += 1
-            logger.info(f"[{inserted_count}] Inserted: {name}")
-
-            # Optional: Commit frequently to persist progress
-            if inserted_count % 10 == 0:
-                conn.commit()
-                logger.info(f"Checkpoint reached. Committed {inserted_count} recipes.")
-
-        except Exception as e:
-            logger.error(f"Failed to process recipe '{name}': {e}")
-            conn.rollback()
-            continue
+        print(f"Inserted: {name}")
 
     conn.commit()
-    logger.info(f"Pipeline complete. Total newly inserted: {inserted_count}")
     cur.close()
     conn.close()
 

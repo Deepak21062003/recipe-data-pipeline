@@ -3,7 +3,6 @@ import os
 import re
 import csv
 import logging
-import time
 from typing import List, Dict, Optional
 import sys
 
@@ -308,10 +307,6 @@ def main():
         insert_meal_ingredients(cur, meal_id, structured["ingredients"])
 
         print(f"Inserted: {name}")
-        
-        # Pacing: Respect API rate limits (Free tier ~15 RPM)
-        if structured.get("metadata", {}).get("ai_assisted"):
-            time.sleep(5)
 
     conn.commit()
     cur.close()

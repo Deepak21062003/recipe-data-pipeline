@@ -1,12 +1,7 @@
-from google import genai
+import google.generativeai as genai
 import os
 import json
 import logging
-import re
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -15,27 +10,20 @@ logger = logging.getLogger(__name__)
 # Configure Gemini
 api_key = os.getenv("GOOGLE_API_KEY")
 if api_key:
-    client = genai.Client(api_key=api_key)
-    MODEL_ID = 'gemini-2.0-flash'
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel('gemini-1.5-flash')
 else:
     logger.warning("GOOGLE_API_KEY not found. AI features will be disabled (falling back to deterministic logic).")
-    client = None
+    model = None
 
 def _call_gemini(prompt: str) -> str:
-    if not client:
+    if not model:
         return ""
     try:
-        response = client.models.generate_content(
-            model=MODEL_ID,
-            contents=prompt
-        )
+        response = model.generate_content(prompt)
         return response.text.strip()
     except Exception as e:
-        # Check for quota exhaustion (429) - Fail fast to fallback logic
-        if "429" in str(e):
-            logger.warning("Gemini Quota Exhausted (429). Switching to Deterministic Parsing Logic...")
-        else:
-            logger.error(f"Gemini API Error: {e}")
+        logger.error(f"Error calling Gemini: {e}")
         return ""
 
 # --- ALLOWED LLM USAGE: Ingredient Entity Disambiguation ---
@@ -46,7 +34,7 @@ def resolve_ambiguity(ingredient_name: str, recipe_context: str) -> dict:
     Resolves generic names (e.g., 'masala') to specific entities based on context.
     Regex cannot solve this as it requires semantic understanding of the recipe cuisine/title.
     """
-    if not client:
+    if not model:
         return {"suggestion": ingredient_name, "confidence_score": 0.0}
 
     prompt = f"""
@@ -62,9 +50,6 @@ def resolve_ambiguity(ingredient_name: str, recipe_context: str) -> dict:
     }}
     """
     response_text = _call_gemini(prompt)
-    if not response_text:
-        return {"suggestion": ingredient_name, "confidence_score": 0.0}
-        
     response_text = re.sub(r'```json\s*|\s*```', '', response_text).strip()
     try:
         return json.loads(response_text)
@@ -79,7 +64,7 @@ def adaptive_map(raw_data: dict) -> dict:
     Identifies which keys in an unknown schema represent 'ingredients' and 'instructions'.
     Regex is insufficient because key names are arbitrary across different datasets.
     """
-    if not client:
+    if not model:
         return raw_data
 
     prompt = f"""
@@ -91,9 +76,6 @@ def adaptive_map(raw_data: dict) -> dict:
     Return ONLY a valid JSON object mapping our keys to the raw values.
     """
     response_text = _call_gemini(prompt)
-    if not response_text:
-        return raw_data
-        
     response_text = re.sub(r'```json\s*|\s*```', '', response_text).strip()
     try:
         return json.loads(response_text)
@@ -107,7 +89,7 @@ def classify_steps(raw_steps: list) -> dict:
     Regex is insufficient as it cannot distinguish 'Cut the chicken' (prep) 
     from 'Fry the chicken' (cook) reliably without semantic analysis.
     """
-    if not client:
+    if not model:
         return {"prep": [], "cook": [], "noise": []}
 
     prompt = f"""
@@ -122,9 +104,6 @@ def classify_steps(raw_steps: list) -> dict:
     }}
     """
     response_text = _call_gemini(prompt)
-    if not response_text:
-        return {"prep": [], "cook": [], "noise": []}
-        
     response_text = re.sub(r'```json\s*|\s*```', '', response_text).strip()
     try:
         return json.loads(response_text)

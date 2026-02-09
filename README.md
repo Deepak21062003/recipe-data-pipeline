@@ -2,14 +2,17 @@
 
 This project implements an **Adaptive Hybrid Recipe Data Pipeline** designed to ingest, clean, normalize, and store recipe data into a **PostgreSQL database**. 
 
-By strictly separating **semantic intelligence (AI)** from **structural parsing (Regex)**, the pipeline achieves 100% accurate metric normalization while maintaining the agility to handle unknown future data formats.
+### 🎯 Executive Summary
+Traditional data pipelines break when source formats shift (Schema Drift) or when linguistic ambiguity occurs. This pipeline solves these challenges using a **Layered Hybrid Architecture**: 
+1. **Semantic Intelligence (LLM)** handles the "Entropy" (unknown schemas, generic ingredient names, and web noise).
+2. **Deterministic Logic (Regex/Python)** handles the "Truth" (quantities, units, and structural cleaning) to ensure 0% hallucination in numeric data.
 
 ## 🚀 Key Features
-- **Adaptive Mapping (Layer 0)**: Uses LLMs as a "Universal Adapter" to automatically identify ingredients and instructions in unknown data structures.
-- **Pure Regex extraction**: 100% deterministic parsing of quantities, units, and punctuation. Zero AI hallucination risk for numeric data.
-- **Semantic Disambiguation**: Uses context to resolve generic ingredients (e.g., "masala") to specific entities (e.g., "Garam Masala").
-- **Smart Step Classification**: Distinguishes cooking instructions from web noise and ads semantically.
-- **Relational Storage**: Maps cleaned data into a multi-table PostgreSQL schema for downstream analytics.
+- **Adaptive Mapping (Layer 0)**: Uses LLMs as a "Universal Adapter" to automatically identify ingredients and instructions in unknown data structures. Agnostic to input source keys.
+- **Pure Regex extraction**: 100% deterministic parsing of quantities, units, and punctuation. Guaranteed numeric integrity.
+- **Semantic Disambiguation**: Contextual resolution of generic terms (e.g., resolving "masala" to "Garam Masala" based on recipe title).
+- **Intelligent Step Categorization**: Distinguishes cooking instructions from web metadata and ads semantically.
+- **PostgreSQL Relational Storage**: Full ETL flow into a structured relational schema.
 
 ---
 

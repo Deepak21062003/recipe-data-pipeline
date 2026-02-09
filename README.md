@@ -54,6 +54,18 @@ To meet strict technical constraints, we maintain a hard boundary between LLM an
 
 ---
 
+## 🤖 How AI Assists the Pipeline
+
+The AI in this project acts as a **Semantic Layer** that handles high-entropy (unpredictable) data, while the Python engine handles the **Structural Layer**.
+
+1.  **Semantic sensing**: Instead of hardcoding keys for 100+ websites, the AI identifies which raw fields represent ingredients or instructions based on their meaning.
+2.  **Collaborative Error Correction**: If the deterministic parser (Layer 1) fails to extract a name cleanly, the AI (Layer 2) is used as a fallback to resolve the ambiguity using recipe context (e.g., Title and other ingredients).
+3.  **Intelligent Filtering**: AI distinguishes between a cooking action ("Cut the onion") and marketing noise ("Cut your costs here") which often use the same sentence structures.
+
+**Crucially**, the AI's output is always validated by the deterministic layer before it touches the database, ensuring zero hallucination in quantities and units.
+
+---
+
 ## 🛠️ Installation & Usage
 
 ### 1. Database Setup

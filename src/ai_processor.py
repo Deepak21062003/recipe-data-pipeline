@@ -109,3 +109,41 @@ def classify_steps(raw_steps: list) -> dict:
         return json.loads(response_text)
     except:
         return {"prep": [], "cook": [], "noise": []}
+
+def summarize_steps(prep_steps: list, cook_steps: list) -> str:
+    """
+    LLM TASK: Instruction Summarization.
+    Converts raw steps into a professional, concise summary with clear headers.
+    """
+    if not model or (not prep_steps and not cook_steps):
+        # Fallback: Simple structured joining
+        res = []
+        if prep_steps:
+            res.append("Prep_steps:")
+            res.extend([f"- {s}" for s in prep_steps])
+        if cook_steps:
+            if res: res.append("")
+            res.append("Cook_steps:")
+            res.extend([f"- {s}" for s in cook_steps])
+        return "\n".join(res)
+
+    prompt = f"""
+    You are a professional chef. Summarize the following recipe steps into two clear and concise sections: 
+    "Prep_steps" and "Cook_steps". 
+    
+    Rules:
+    1. Combine multiple small actions into single, logical summarized steps.
+    2. Remove any conversational filler or non-essential details.
+    3. Use a professional, action-oriented tone.
+    
+    Raw Prep: {json.dumps(prep_steps)}
+    Raw Cook: {json.dumps(cook_steps)}
+    
+    Format exactly as:
+    Prep_steps:
+    - [Summarized point]
+    
+    Cook_steps:
+    - [Summarized point]
+    """
+    return _call_gemini(prompt)

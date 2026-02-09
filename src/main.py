@@ -215,7 +215,8 @@ def process_recipe(recipe: dict) -> dict:
         final_prep = clean_instructions(raw_prep)
         final_cook = clean_instructions(raw_cook)
 
-    combined_instructions = "\n".join(final_prep + final_cook)
+    # ALLOWED LLM USAGE: Summarization & Structuring
+    combined_instructions = ai_processor.summarize_steps(final_prep, final_cook)
 
     # --- EXTRACT METADATA (DETERMINISTIC) ---
     servings = extract_servings(recipe.get("servings") or recipe.get("yield") or recipe.get("serves"))

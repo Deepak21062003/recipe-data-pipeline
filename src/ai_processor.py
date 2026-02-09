@@ -123,17 +123,23 @@ def summarize_steps(prep_steps: list, cook_steps: list) -> str:
     LLM TASK: Instruction Summarization.
     Converts raw steps into a professional, concise summary with clear headers.
     """
-    if not client or (not prep_steps and not cook_steps):
-        # Fallback: Simple structured joining
-        res = []
-        if prep_steps:
-            res.append("prep_steps:")
-            res.extend([f"- {s}" for s in prep_steps])
-        if cook_steps:
-            if res: res.append("")
-            res.append("cook_steps:")
-            res.extend([f"- {s}" for s in cook_steps])
-        return "\n".join(res)
+    # Defensive check: if no input, return empty
+    if not prep_steps and not cook_steps:
+        return ""
+
+    fallback_res = []
+    if prep_steps:
+        fallback_res.append("prep_steps:")
+        fallback_res.extend([f"- {s}" for s in prep_steps])
+    if cook_steps:
+        if fallback_res: fallback_res.append("")
+        fallback_res.append("cook_steps:")
+        fallback_res.extend([f"- {s}" for s in cook_steps])
+    
+    fallback_string = "\n".join(fallback_res)
+
+    if not client:
+        return fallback_string
 
     prompt = f"""
     You are a professional chef. Summarize the following recipe steps into two clear and concise sections: 
@@ -154,7 +160,14 @@ def summarize_steps(prep_steps: list, cook_steps: list) -> str:
     cook_steps:
     - [Summarized point]
     """
-    return _call_gemini(prompt)
+    ai_response = _call_gemini(prompt)
+    
+    # Final Guardrail: If AI returned nothing or just whitespace, use fallback
+    if not ai_response or not ai_response.strip():
+        logger.warning("AI summarization returned empty response. Using deterministic fallback.")
+        return fallback_string
+        
+    return ai_response
 
 def draft_instructions(title: str, ingredients: list) -> dict:
     """

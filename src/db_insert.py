@@ -2,6 +2,13 @@ from psycopg2.extras import Json
 from db import get_connection
 import re
 
+def get_existing_recipe_names(cur) -> set:
+    """
+    Fetches all unique recipe names currently in the database.
+    """
+    cur.execute("SELECT name FROM recipes")
+    return {row[0] for row in cur.fetchall()}
+
 def insert_recipe(cur, recipe):
     cur.execute(
         """

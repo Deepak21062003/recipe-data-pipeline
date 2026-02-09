@@ -146,18 +146,4 @@ def summarize_steps(prep_steps: list, cook_steps: list) -> str:
     Cook_steps:
     - [Summarized point]
     """
-    ai_res = _call_gemini(prompt).strip()
-    
-    # Validation: If AI returned only headers or something very short, use fallback
-    if len(ai_res) < 20 or "Prep_steps:" not in ai_res:
-        res = []
-        if prep_steps:
-            res.append("Prep_steps:")
-            res.extend([f"- {s}" for s in prep_steps])
-        if cook_steps:
-            if res: res.append("")
-            res.append("Cook_steps:")
-            res.extend([f"- {s}" for s in cook_steps])
-        return "\n".join(res)
-        
-    return ai_res
+    return _call_gemini(prompt)

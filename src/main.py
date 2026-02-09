@@ -201,8 +201,7 @@ def process_recipe(recipe: dict) -> dict:
 
     raw_prep = ensure_list(recipe.get("prep_steps") or recipe.get("preparation") or [])
     raw_cook = ensure_list(recipe.get("cook_steps") or recipe.get("cooking") or [])
-    raw_extra = ensure_list(recipe.get("quick_steps") or recipe.get("instructions") or [])
-    all_raw_steps = raw_prep + raw_cook + raw_extra
+    all_raw_steps = raw_prep + raw_cook
     
     # ALLOWED LLM USAGE: Step Classification
     # We classify the raw strings to clean noise and categorize correctly

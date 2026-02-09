@@ -2,7 +2,6 @@ import google.generativeai as genai
 import os
 import json
 import logging
-import re
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -116,47 +115,65 @@ def summarize_steps(prep_steps: list, cook_steps: list) -> str:
     LLM TASK: Instruction Summarization.
     Converts raw steps into a professional, concise summary with clear headers.
     """
-    if not prep_steps and not cook_steps:
-        return ""
+    if not model or (not prep_steps and not cook_steps):
+        # Fallback: Simple structured joining
+        res = []
+        if prep_steps:
+            res.append("Prep_steps:")
+            res.extend([f"- {s}" for s in prep_steps])
+        if cook_steps:
+            if res: res.append("")
+            res.append("Cook_steps:")
+            res.extend([f"- {s}" for s in cook_steps])
+        return "\n".join(res)
 
-    # 1. Summarize Prep
-    prep_summary = ""
-    if prep_steps:
-        if model:
-            prompt = f"Summarize these recipe PREPARATION steps into a concise bulleted list:\n{json.dumps(prep_steps)}"
-            prep_summary = _call_gemini(prompt).strip()
-        if not prep_summary: # Fallback
-            prep_summary = "\n".join([f"- {s.replace('- ', '').strip()}" for s in prep_steps])
+    prompt = f"""
+    You are a professional chef. Summarize the following recipe steps into two clear and concise sections: 
+    "Prep_steps" and "Cook_steps". 
+    
+    Rules:
+    1. Combine multiple small actions into single, logical summarized steps.
+    2. Remove any conversational filler or non-essential details.
+    3. Use a professional, action-oriented tone.
+    
+    Raw Prep: {json.dumps(prep_steps)}
+    Raw Cook: {json.dumps(cook_steps)}
+    
+    Format exactly as:
+    Prep_steps:
+    - [Summarized point]
+    
+    Cook_steps:
+    - [Summarized point]
+    """
+    return _call_gemini(prompt)
 
-    # 2. Summarize Cook
-    cook_summary = ""
-    if cook_steps:
-        if model:
-            prompt = f"Summarize these recipe COOKING steps into a concise bulleted list:\n{json.dumps(cook_steps)}"
-            cook_summary = _call_gemini(prompt).strip()
-        if not cook_summary: # Fallback
-            cook_summary = "\n".join([f"- {s.replace('- ', '').strip()}" for s in cook_steps])
+def draft_instructions(title: str, ingredients: list) -> str:
+    """
+    LLM TASK: Instruction Drafting.
+    Generates realistic preparation and cooking steps when source data is empty.
+    """
+    if not model:
+        return "Prep_steps:\n- [No instructions found]\n\nCook_steps:\n- [No instructions found]"
 
-    # 3. Assemble with REQUIRED headers
-    result = []
-    if prep_summary:
-        result.append("Prep_steps:")
-        # Ensure bullet points if the AI forgot them
-        lines = [line.strip() for line in prep_summary.split('\n') if line.strip()]
-        for line in lines:
-            if not line.startswith('-'):
-                result.append(f"- {line}")
-            else:
-                result.append(line)
-                
-    if cook_summary:
-        if result: result.append("")
-        result.append("Cook_steps:")
-        lines = [line.strip() for line in cook_summary.split('\n') if line.strip()]
-        for line in lines:
-            if not line.startswith('-'):
-                result.append(f"- {line}")
-            else:
-                result.append(line)
+    # Format ingredients for context
+    ings_text = ", ".join([i.get('ingredient_name', '') for i in ingredients])
 
-    return "\n".join(result)
+    prompt = f"""
+    You are a professional recipe developer. The following recipe has a title and ingredients but NO instructions.
+    
+    Recipe Title: {title}
+    Ingredients: {ings_text}
+    
+    Based on these, draft a realistic, professional, and concise 2-section guide.
+    1. "Prep_steps": Focus on washing, chopping, and measuring.
+    2. "Cook_steps": Focus on the actual cooking, assembling, or serving.
+    
+    Format exactly as:
+    Prep_steps:
+    - [Professional step]
+    
+    Cook_steps:
+    - [Professional step]
+    """
+    return _call_gemini(prompt)

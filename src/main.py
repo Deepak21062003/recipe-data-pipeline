@@ -203,20 +203,24 @@ def process_recipe(recipe: dict) -> dict:
     raw_cook = ensure_list(recipe.get("cook_steps") or recipe.get("cooking") or [])
     all_raw_steps = raw_prep + raw_cook
     
-    # ALLOWED LLM USAGE: Step Classification
-    # We classify the raw strings to clean noise and categorize correctly
-    ai_classification = ai_processor.classify_steps(all_raw_steps)
-    
-    final_prep = ai_classification.get("prep", [])
-    final_cook = ai_classification.get("cook", [])
-    
-    # Fallback if AI fails: Use deterministic cleaning
-    if not final_prep and not final_cook:
-        final_prep = clean_instructions(raw_prep)
-        final_cook = clean_instructions(raw_cook)
+    if not all_raw_steps:
+        # ALLOWED LLM USAGE: Content Generation for Empty Sources
+        combined_instructions = ai_processor.draft_instructions(title, unique_ingredients)
+    else:
+        # ALLOWED LLM USAGE: Step Classification
+        # We classify the raw strings to clean noise and categorize correctly
+        ai_classification = ai_processor.classify_steps(all_raw_steps)
+        
+        final_prep = ai_classification.get("prep", [])
+        final_cook = ai_classification.get("cook", [])
+        
+        # Fallback if AI fails: Use deterministic cleaning
+        if not final_prep and not final_cook:
+            final_prep = clean_instructions(raw_prep)
+            final_cook = clean_instructions(raw_cook)
 
-    # ALLOWED LLM USAGE: Summarization & Structuring
-    combined_instructions = ai_processor.summarize_steps(final_prep, final_cook)
+        # ALLOWED LLM USAGE: Summarization & Structuring
+        combined_instructions = ai_processor.summarize_steps(final_prep, final_cook)
 
     # --- EXTRACT METADATA (DETERMINISTIC) ---
     servings = extract_servings(recipe.get("servings") or recipe.get("yield") or recipe.get("serves"))

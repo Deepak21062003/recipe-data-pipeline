@@ -201,7 +201,8 @@ def process_recipe(recipe: dict) -> dict:
 
     raw_prep = ensure_list(recipe.get("prep_steps") or recipe.get("preparation") or [])
     raw_cook = ensure_list(recipe.get("cook_steps") or recipe.get("cooking") or [])
-    all_raw_steps = raw_prep + raw_cook
+    raw_quick = ensure_list(recipe.get("quick_steps") or [])
+    all_raw_steps = raw_prep + raw_cook + raw_quick
     
     # ALLOWED LLM USAGE: Step Classification
     # We classify the raw strings to clean noise and categorize correctly
@@ -212,7 +213,7 @@ def process_recipe(recipe: dict) -> dict:
     
     # Fallback if AI fails: Use deterministic cleaning
     if not final_prep and not final_cook:
-        final_prep = clean_instructions(raw_prep)
+        final_prep = clean_instructions(raw_prep + raw_quick)
         final_cook = clean_instructions(raw_cook)
 
     # ALLOWED LLM USAGE: Summarization & Structuring

@@ -146,4 +146,18 @@ def summarize_steps(prep_steps: list, cook_steps: list) -> str:
     Cook_steps:
     - [Summarized point]
     """
-    return _call_gemini(prompt)
+    res = _call_gemini(prompt)
+    if not res or len(res.strip()) < 15: # Too short to be a valid summary
+        return "\n".join(["Prep_steps:"] + [f"- {s}" for s in prep_steps] + ["Cook_steps:"] + [f"- {s}" for s in cook_steps])
+    
+    # Final cleanup: Remove empty headers if the LLM produces them
+    lines = res.split("\n")
+    final_lines = []
+    for i, line in enumerate(lines):
+        if line.strip().lower() in ["prep_steps:", "cook_steps:"]:
+            # Peek at next line
+            if i + 1 < len(lines) and lines[i+1].strip().startswith("-"):
+                final_lines.append(line)
+        else:
+            final_lines.append(line)
+    return "\n".join(final_lines).strip()

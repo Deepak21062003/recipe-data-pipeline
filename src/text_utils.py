@@ -12,6 +12,8 @@ def universal_clean(text: str) -> str:
     text = re.sub(r'[\\/,–—\(\)\[\]\{\}.\-:*]+', ' ', text)
     # Remove noise words
     text = re.sub(NOISE_WORDS, '', text)
+    # Explicit rename (requested by user)
+    text = text.replace("curry leaves", "curry leafs")
     # Deduplicate tokens
     tokens = []
     for w in text.split():

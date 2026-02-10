@@ -98,7 +98,7 @@ def normalize_quantity_unit(
 
     # 🔥 Special Handle: Common Pantry Items (often have no quantity)
     common_pantry = {
-        "salt", "oil", "asafoetida", "hing", "curry leaves", "water", 
+        "salt", "oil", "asafoetida", "hing", "curry leafs", "water", 
         "mustard seeds", "cumin seeds", "jeera", "pepper", "black pepper",
         "saffron", "soy", "butter", "ghee", "sugar", "turmeric"
     }
@@ -138,7 +138,7 @@ def normalize_quantity_unit(
 
     # 4. Fallback: Ensure no null quantity/unit for solids/liquids (except exemptions)
     # 🔥 Special Handling: User requested no nulls for solids (g) and liquids (ml)
-    exemptions = {"saffron", "hing", "asafoetida", "curry leaves"}
+    exemptions = {"saffron", "hing", "asafoetida", "curry leafs"}
     is_exempt = any(ex in clean_name_lower for ex in exemptions)
 
     # If not exempt and quantity is missing, default to 1.0

@@ -9,5 +9,5 @@ STANDARD_INGREDIENTS = {
     "spinach", "pea", "green peas", "bean", "cauliflower", "cabbage", "brinjal", "okra",
     "mushroom", "corn", "cheese", "bread", "mayonnaise", "ketchup", "sauce",
     "vinegar", "soy", "noodles", "pasta", "tea", "coffee", "chocolate",
-    "vanilla", "baking", "yeast", "curry leaves", "mint", "cilantro"
+    "vanilla", "baking", "yeast", "curry leafs", "mint", "cilantro"
 }

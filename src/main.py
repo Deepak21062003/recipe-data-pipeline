@@ -15,6 +15,7 @@ from instruction_cleaner import clean_instructions, looks_like_instruction
 from normalizers import normalize_times, extract_servings
 from unit_normalizer import normalize_quantity_unit
 from text_utils import universal_clean
+from rapidfuzz import fuzz
 
 from db import get_connection
 from db_insert import (
@@ -129,6 +130,14 @@ def process_recipe(recipe: dict) -> dict:
         parsed["ingredient_name"] = clean_name
         qty, unit, note = normalize_quantity_unit(parsed.get("quantity"), parsed.get("unit"), clean_name)
         
+        # Populate ingredient_info with unit_conversion
+        if "ingredient_info" not in parsed:
+            parsed["ingredient_info"] = {}
+        
+        # Add unit_conversion to info
+        if note and note != "no conversion applied":
+             parsed["ingredient_info"]["unit_conversion"] = note
+
         # Uncertainty Detection (Trigger for Layer 2)
         is_ambiguous = clean_name in {"masala", "spices", "seasoning", "powder", "mix"}
         is_missing_qty = qty is None or (isinstance(qty, float) and qty <= 0)
@@ -168,6 +177,11 @@ def process_recipe(recipe: dict) -> dict:
         parsed["quantity"] = q
         parsed["unit"] = u
         
+        if n and n != "no conversion applied":
+             if "ingredient_info" not in parsed:
+                 parsed["ingredient_info"] = {}
+             parsed["ingredient_info"]["unit_conversion"] = n
+        
         if final_is_valid_ingredient(parsed["ingredient_name"]):
             processed_ingredients.append(parsed)
 
@@ -204,7 +218,6 @@ def process_recipe(recipe: dict) -> dict:
     all_raw_steps = raw_prep + raw_cook
     
     # ALLOWED LLM USAGE: Step Classification
-    # We classify the raw strings to clean noise and categorize correctly
     ai_classification = ai_processor.classify_steps(all_raw_steps)
     
     final_prep = ai_classification.get("prep", [])
@@ -214,14 +227,27 @@ def process_recipe(recipe: dict) -> dict:
     if not final_prep and not final_cook:
         final_prep = clean_instructions(raw_prep)
         final_cook = clean_instructions(raw_cook)
-
-    # ALLOWED LLM USAGE: Summarization & Structuring
-    combined_instructions = ai_processor.summarize_steps(final_prep, final_cook)
     
-    # Final sanitation: ensure no empty rows or leading/trailing noise
-    combined_instructions = combined_instructions.strip()
-    # Collapse ALL empty lines (no double newlines)
-    combined_instructions = "\n".join([line for line in combined_instructions.splitlines() if line.strip()])
+    # Deduplicate steps using Fuzzy Logic (remove 90%+ similar strings)
+    final_combined_list = []
+    for s in (final_prep + final_cook):
+        is_duplicate = False
+        for existing in final_combined_list:
+            # Traditional fuzzy match
+            if fuzz.ratio(s.lower(), existing.lower()) > 80:
+                is_duplicate = True
+                break
+            # Subset match (if one is almost entirely inside another)
+            if s.lower() in existing.lower() or existing.lower() in s.lower():
+                # Keep the more descriptive one if they are short, or the shorter one if it's cleaner
+                # Actually, in recipes, usually the longer one has more detail.
+                # But here we want 'summarized' so we keep the shorter one if they are >= 90% overlap
+                is_duplicate = True
+                break
+        if not is_duplicate:
+            final_combined_list.append(s)
+
+    combined_instructions = "Total_steps: " + "\n".join(final_combined_list)
 
     # --- EXTRACT METADATA (DETERMINISTIC) ---
     servings = extract_servings(recipe.get("servings") or recipe.get("yield") or recipe.get("serves"))

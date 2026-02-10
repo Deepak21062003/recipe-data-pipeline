@@ -1,4 +1,4 @@
 psycopg2-binary
 rapidfuzz
-google-genai
+google-generativeai
 python-dotenv

@@ -27,6 +27,15 @@ Triggered only when ambiguity is detected. It resolves generic entities (e.g., `
 ### **Layer 3: Relational Persistence**
 Maps the cleaned, high-confidence data into a normalized PostgreSQL schema, ensuring referential integrity and optimized query performance.
 
+### **Layer 4: Advanced Refinement**
+- **Instruction Summarization**:
+    - **Noise Filtering**: Removes social media links ("Follow us!"), ads, and redundant metadata.
+    - **Fuzzy Deduplication**: Identifies and merges near-duplicate steps.
+    - **Header Formatting**: Standardizes all instructions with a "Total_steps:" prefix.
+- **Ingredient Cleaning**:
+    - **Synonym Removal**: Aggressively strips regional synonyms (e.g., "Javitri", "Saunf") to standardize names.
+    - **Structured Metadata**: Enriches ingredients with `unit_conversion` logic (e.g., "1 tbsp -> 15ml").
+
 ---
 
 ## ⚖️ AI vs. Deterministic Boundaries
@@ -98,4 +107,6 @@ python3 src/test_adaptive_pipeline.py
 - [x] **Clean Logic**: Hard boundary between LLM (Semantic) and Regex (Numeric).
 - [x] **Metric Accuracy**: Standardized `g` and `ml` values for all ingredients.
 - [x] **Noise Filtering**: AI-assisted filtering of web ads from instructions.
+- [x] **Instruction Quality**: "Total_steps" formatting and fuzzy deduplication implemented.
+- [x] **Ingredient Hygiene**: Synonyms cleaned and unit conversions structured.
 - [x] **Documentation**: Clear technical justification provided in `assessment_compliance.md`.

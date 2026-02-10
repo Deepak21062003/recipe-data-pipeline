@@ -86,22 +86,31 @@ def classify_steps(raw_steps: list) -> dict:
     """
     LLM TASK: Step Classification.
     Categorizes raw strings into 'prep', 'cook', or 'noise'.
-    Ensures that steps are mutually exclusive (each step appears only once).
+    Regex is insufficient as it cannot distinguish 'Cut the chicken' (prep) 
+    from 'Fry the chicken' (cook) reliably without semantic analysis.
     """
     if not model:
         return {"prep": [], "cook": [], "noise": []}
 
     prompt = f"""
-    Classify these recipe steps into "prep" (preparation), "cook" (cooking), or "noise" (web ads/site info).
-    Steps: {json.dumps(raw_steps)}
+    Classify these recipe steps into:
+    1. "prep": Preparation actions (chopping, measuring, preheating).
+    2. "cook": Cooking actions (frying, boiling, baking).
+    3. "noise": Web advertisements, social media links, site credits, redundant metadata, or low-value commentary.
     
-    IMPORTANT: Each step should be assigned to ONLY ONE category. Do not duplicate steps.
+    CLEANING RULES:
+    - If a step is a near-duplicate, put the redundant copy in "noise".
+    - Filter out sentences that don't contain a cooking command.
+    - STRIP FLUFF: Remove flowery adjectives (e.g., "beautifully", "perfectly", "deliciously") if they don't add technical value to the step.
+    - Focus on the core action (e.g., "Fry until golden" instead of "Fry until they are beautifully golden and crispy").
+    
+    Steps: {json.dumps(raw_steps)}
     
     Return ONLY JSON:
     {{
-        "prep": ["step1", ...],
-        "cook": ["step1", ...],
-        "noise": ["step1", ...]
+        "prep": ["clean_step", ...],
+        "cook": ["clean_step", ...],
+        "noise": ["removed_step", ...]
     }}
     """
     response_text = _call_gemini(prompt)
@@ -110,46 +119,3 @@ def classify_steps(raw_steps: list) -> dict:
         return json.loads(response_text)
     except:
         return {"prep": [], "cook": [], "noise": []}
-
-def summarize_steps(prep_steps: list, cook_steps: list) -> str:
-    """
-    LLM TASK: Instruction Summarization.
-    Converts raw steps into a professional, concise summary with clear headers.
-    """
-    # Clean empty steps
-    prep_steps = [s.strip() for s in prep_steps if s and s.strip()]
-    cook_steps = [s.strip() for s in cook_steps if s and s.strip()]
-
-    if not model or (not prep_steps and not cook_steps):
-        # Fallback: Simple structured joining
-        res = []
-        if prep_steps:
-            res.append("Prep_steps:")
-            res.extend([f"- {s}" for s in prep_steps])
-        if cook_steps:
-            # We removed the empty string addition to ensure no empty rows
-            res.append("Cook_steps:")
-            res.extend([f"- {s}" for s in cook_steps])
-        return "\n".join(res)
-
-    prompt = f"""
-    You are a professional chef. Summarize the following recipe steps into two clear and concise sections: 
-    "Prep_steps" and "Cook_steps". 
-    
-    Rules:
-    1. Combine multiple small actions into single, logical summarized steps.
-    2. Remove any conversational filler or non-essential details.
-    3. Use a professional, action-oriented tone.
-    4. STRICT: No blank lines between sections.
-    5. STRICT: Headers must be exactly "Prep_steps:" and "Cook_steps:".
-    
-    Raw Prep: {json.dumps(prep_steps)}
-    Raw Cook: {json.dumps(cook_steps)}
-    
-    Return format exactly:
-    Prep_steps:
-    - [Summarized point]
-    Cook_steps:
-    - [Summarized point]
-    """
-    return _call_gemini(prompt)

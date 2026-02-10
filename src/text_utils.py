@@ -1,7 +1,7 @@
 import re
 
 # Centralized noise and preparation words for consistent cleaning
-NOISE_WORDS = r'\b(messy|ugly|dirty|old|new|freshly|locally|organic|natural|pure|original|quality|premium|best|good|extra|super|ultra|with|bones|bone\s+in|boneless|skinless|stems|stalks|pieces|parts|recipes?|can be scaled|about|approximately|roughly|a\s+few|few|a\s+pinch|pinch|a\s+handful|handful|small|medium|large|medium\s+sized|large\s+sized|lukewarm|hot|cold|warm|ice\s+cold|chilled|whole|fresh|dried|raw|ripe|peeled|deseeded|chopped|cubed|sliced|minced|grated|crushed|boiled|fine|finely|roasted|toasted|fried|sauteed|sautéed|washed|cleaned|beaten|whisked|blended|mashed|pureed|puréed|and|or|for|in|as|per|into|on|of|to)\b'
+NOISE_WORDS = r'\b(messy|ugly|dirty|old|new|freshly|locally|organic|natural|pure|original|quality|premium|best|good|extra|super|ultra|with|bones|bone\s+in|boneless|skinless|stems|stalks|pieces|parts|recipes?|can be scaled|about|approximately|roughly|a\s+few|few|a\s+pinch|pinch|a\s+handful|handful|small|medium|large|medium\s+sized|large\s+sized|lukewarm|hot|cold|warm|ice\s+cold|chilled|whole|fresh|dried|raw|ripe|peeled|deseeded|chopped|cubed|sliced|minced|grated|crushed|boiled|fine|finely|roasted|toasted|fried|sauteed|sautéed|washed|cleaned|beaten|whisked|blended|mashed|pureed|puréed|and|or|for|in|as|per|into|on|of|to|javitri|javithri|elaichi|laung|dalchini|piece|saunf|jeera|dhania|haldi|mirch|adrak|lehsun|pudina|kaju|badam|sarso|rai|methi|hing|shimla|aloo|gobi|matar|chana|rajma|dal|chawal|adjust|taste|check|optional|required|needed)\b'
 
 def universal_clean(text: str) -> str:
     if not text: return ""

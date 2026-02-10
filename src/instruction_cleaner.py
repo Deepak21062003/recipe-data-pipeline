@@ -146,10 +146,14 @@ def clean_instructions(steps: list) -> list:
 
         # 1. Strip noisy symbols like ▢ and leading dashes
         step = re.sub(r'[▢]', '', step)
-        step = re.sub(r'^\s*[\-\*]\s*', '', step)
+        step = re.sub(r'^\s*[\-\*•]\s*', '', step)
+        
+        # 2. Strip common step prefixes (Step 1:, How to:, etc.)
+        step = re.sub(r'^(step\s*\d+[:\.]?|how\s+to\s+make[:\.]?|note[:\.]?)\s*', '', step, flags=re.IGNORECASE)
+        
         step = step.strip()
 
-        if not step:
+        if not step or len(step) < 5: # Complexity Filter: Ignore artifacts like "Done.", "Enjoy!"
             continue
 
         # 2. Filter out ingredient lines
@@ -158,6 +162,10 @@ def clean_instructions(steps: list) -> list:
 
         # 3. Ensure it looks like an instruction
         if not looks_like_instruction(step):
+            continue
+            
+        # 4. Explicit Noise Filter (Deterministic)
+        if re.search(r'\b(instagram|facebook|tiktok|social|click|visit|website|subscribe|follow|yields|servings|prep time|cook time|comment|rating|rate|stars?|enjoy|step)\b', step, flags=re.IGNORECASE):
             continue
 
         # 4. Standardize measurements and convert to text

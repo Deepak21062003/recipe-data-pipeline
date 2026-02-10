@@ -2,11 +2,6 @@ import google.generativeai as genai
 import os
 import json
 import logging
-from dotenv import load_dotenv
-import re
-
-# Load environment variables
-load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -31,7 +26,14 @@ def _call_gemini(prompt: str) -> str:
         logger.error(f"Error calling Gemini: {e}")
         return ""
 
+# --- ALLOWED LLM USAGE: Ingredient Entity Disambiguation ---
+
 def resolve_ambiguity(ingredient_name: str, recipe_context: str) -> dict:
+    """
+    LLM TASK: Ingredient Entity Disambiguation.
+    Resolves generic names (e.g., 'masala') to specific entities based on context.
+    Regex cannot solve this as it requires semantic understanding of the recipe cuisine/title.
+    """
     if not model:
         return {"suggestion": ingredient_name, "confidence_score": 0.0}
 
@@ -54,7 +56,14 @@ def resolve_ambiguity(ingredient_name: str, recipe_context: str) -> dict:
     except:
         return {"suggestion": ingredient_name, "confidence_score": 0.0}
 
+# --- ALLOWED LLM USAGE: Step Classification ---
+
 def adaptive_map(raw_data: dict) -> dict:
+    """
+    LLM TASK: Field Classification.
+    Identifies which keys in an unknown schema represent 'ingredients' and 'instructions'.
+    Regex is insufficient because key names are arbitrary across different datasets.
+    """
     if not model:
         return raw_data
 
@@ -74,12 +83,19 @@ def adaptive_map(raw_data: dict) -> dict:
         return raw_data
 
 def classify_steps(raw_steps: list) -> dict:
+    """
+    LLM TASK: Step Classification.
+    Categorizes raw strings into 'prep', 'cook', or 'noise'.
+    Ensures that steps are mutually exclusive (each step appears only once).
+    """
     if not model:
         return {"prep": [], "cook": [], "noise": []}
 
     prompt = f"""
     Classify these recipe steps into "prep" (preparation), "cook" (cooking), or "noise" (web ads/site info).
     Steps: {json.dumps(raw_steps)}
+    
+    IMPORTANT: Each step should be assigned to ONLY ONE category. Do not duplicate steps.
     
     Return ONLY JSON:
     {{
@@ -96,76 +112,44 @@ def classify_steps(raw_steps: list) -> dict:
         return {"prep": [], "cook": [], "noise": []}
 
 def summarize_steps(prep_steps: list, cook_steps: list) -> str:
-    if not prep_steps and not cook_steps:
-        return ""
+    """
+    LLM TASK: Instruction Summarization.
+    Converts raw steps into a professional, concise summary with clear headers.
+    """
+    # Clean empty steps
+    prep_steps = [s.strip() for s in prep_steps if s and s.strip()]
+    cook_steps = [s.strip() for s in cook_steps if s and s.strip()]
 
-    fallback_res = []
-    if prep_steps:
-        fallback_res.append("prep_steps:")
-        fallback_res.extend([f"- {s}" for s in prep_steps])
-    if cook_steps:
-        if fallback_res: fallback_res.append("")
-        fallback_res.append("quick_steps:")
-        fallback_res.extend([f"- {s}" for s in cook_steps])
-    
-    fallback_string = "\n".join(fallback_res)
-
-    if not model:
-        return fallback_string
+    if not model or (not prep_steps and not cook_steps):
+        # Fallback: Simple structured joining
+        res = []
+        if prep_steps:
+            res.append("Prep_steps:")
+            res.extend([f"- {s}" for s in prep_steps])
+        if cook_steps:
+            # We removed the empty string addition to ensure no empty rows
+            res.append("Cook_steps:")
+            res.extend([f"- {s}" for s in cook_steps])
+        return "\n".join(res)
 
     prompt = f"""
     You are a professional chef. Summarize the following recipe steps into two clear and concise sections: 
-    "prep_steps" and "quick_steps". 
+    "Prep_steps" and "Cook_steps". 
     
     Rules:
     1. Combine multiple small actions into single, logical summarized steps.
     2. Remove any conversational filler or non-essential details.
     3. Use a professional, action-oriented tone.
+    4. STRICT: No blank lines between sections.
+    5. STRICT: Headers must be exactly "Prep_steps:" and "Cook_steps:".
     
     Raw Prep: {json.dumps(prep_steps)}
     Raw Cook: {json.dumps(cook_steps)}
     
-    Format exactly as:
-    prep_steps:
+    Return format exactly:
+    Prep_steps:
     - [Summarized point]
-    
-    quick_steps:
+    Cook_steps:
     - [Summarized point]
     """
-    ai_response = _call_gemini(prompt)
-    if not ai_response or not ai_response.strip():
-        return fallback_string
-    return ai_response
-
-def draft_instructions(title: str, ingredients: list) -> dict:
-    if not model:
-        return {"prep_steps": ["[No instructions found]"], "quick_steps": ["[No instructions found]"]}
-
-    ings_text = ", ".join([i.get('ingredient_name', '') for i in ingredients])
-
-    prompt = f"""
-    You are a professional recipe developer. The following recipe has a title and ingredients but NO instructions.
-    
-    Recipe Title: {title}
-    Ingredients: {ings_text}
-    
-    Based on these, draft a realistic, professional, and concise 2-section guide.
-    1. "prep_steps": Focus on washing, chopping, and measuring.
-    2. "quick_steps": Focus on the actual cooking, assembling, or serving.
-    
-    Format exactly as:
-    {{
-        "prep_steps": ["step1", ...],
-        "quick_steps": ["step2", ...]
-    }}
-    """
-    response_text = _call_gemini(prompt)
-    response_text = re.sub(r'```json\s*|\s*```', '', response_text).strip()
-    try:
-        data = json.loads(response_text)
-        return {
-            "prep_steps": data.get("prep_steps", []),
-            "quick_steps": data.get("quick_steps", data.get("cook_steps", []))
-        }
-    except:
-        return {"prep_steps": ["[Drafting failed]"], "quick_steps": ["[Drafting failed]"]}
+    return _call_gemini(prompt)

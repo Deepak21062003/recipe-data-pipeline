@@ -67,13 +67,22 @@ recipe_pipeline/
 │   ├── ai_processor.py       # LLM Integration Logic
 │   ├── normalizers.py        # Time/Servings extraction
 │   ├── ingredient_parser.py  # Regex Quantity/Unit extraction
+│   ├── instruction_cleaner.py # NLP-based step cleaning & noise removal
 │   ├── unit_normalizer.py    # Metric conversion (g, ml)
+│   ├── text_utils.py         # Universal cleaning & title sanitization
 │   ├── db_insert.py          # PostgreSQL Mapping Logic
-│   └── test_adaptive_pipeline.py # Final Verification Suite
+│   ├── db.py                 # Database connectivity
+│   ├── export_evidence.py    # Evidence CSV generation
+│   ├── smart_parser.py       # Heuristic-based smart parsing
+│   ├── standard_ingredients.py # Ingredient synonym mappings
+│   ├── test_adaptive_pipeline.py # Final Verification Suite
+│   └── verify_ai_connection.py # AI API connection test
 ├── sql/
 │   └── schema.sql            # DDL for Relational Tables
-└── data/
-    └── recipes.json          # Source dataset
+├── data/
+│   └── recipes.json          # Source dataset
+├── output_evidence/          # Processed data CSV exports
+└── requirements.txt          # Project dependencies
 ```
 
 ---

@@ -110,3 +110,24 @@ python3 src/test_adaptive_pipeline.py
 - [x] **Instruction Quality**: "Total_steps" formatting and fuzzy deduplication implemented.
 - [x] **Ingredient Hygiene**: Synonyms cleaned and unit conversions structured.
 - [x] **Documentation**: Clear technical justification provided in `assessment_compliance.md`.
+
+---
+
+## 🎨 Design & Experience
+*   **Visual Feedback**: The terminal output uses icons to indicate processing logic:
+    *   `🤖 [AI]`: Complexity handled by Gemini 1.5 Flash.
+    *   `⚡ [Regex]`: Speed optimized deterministic processing.
+*   **Safety First**: Automatic fallback to Regex if AI quota (429) is exceeded.
+*   **Clean Data**:
+    *   Titles are scrubbed of SEO keywords ("How to make", "Restaurant Style").
+    *   Ingredients are normalized to standard metrics ($g$, $ml$).
+    *   Instructions are deduplicated and summarized.
+
+## 📦 Requirements
+*   `python >= 3.9`
+*   `psycopg2-binary`: Database connectivity.
+*   `rapidfuzz`: Fuzzy matching for deduplication.
+*   `google-generativeai`: Google Gemini API client.
+*   `python-dotenv`: Environment variable management.
+
+

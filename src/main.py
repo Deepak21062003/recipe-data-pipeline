@@ -14,7 +14,8 @@ from ingredient_parser import parse_ingredient
 from instruction_cleaner import clean_instructions, looks_like_instruction
 from normalizers import normalize_times, extract_servings
 from unit_normalizer import normalize_quantity_unit
-from text_utils import universal_clean
+from unit_normalizer import normalize_quantity_unit
+from text_utils import universal_clean, clean_recipe_title
 from rapidfuzz import fuzz
 
 from db import get_connection
@@ -101,7 +102,7 @@ def process_recipe(recipe: dict) -> dict:
         recipe = ai_processor.adaptive_map(recipe)
         is_adaptive = True
 
-    title = recipe.get("recipe_name", "Unknown Recipe")
+    title = clean_recipe_title(recipe.get("recipe_name", "Unknown Recipe"))
     
     # --- LAYER 1: DETERMINISTIC PRIMARY FLOW ---
     raw_ing_data = recipe.get("ingredients_json") or recipe.get("raw_ingredients") or "[]"
@@ -167,10 +168,8 @@ def process_recipe(recipe: dict) -> dict:
                 parsed["ai_refined"] = True
         
         # PROHIBITED LLM USAGE: Simple quantity parsing/inference is handled deterministically
-        if item["is_missing_qty"]:
-            # Deterministic Fallback: Default to 1.0 if missing, instead of AI inference
-            parsed["quantity"] = 1.0 if not parsed.get("quantity") else parsed["quantity"]
-            parsed["unit"] = "unit" if not parsed.get("unit") else parsed["unit"]
+        # Note: Defaulting to 1.0 is now handled inside normalize_quantity_unit to respect exemptions.
+        pass
 
         # Final Deterministic Normalization
         q, u, n = normalize_quantity_unit(parsed["quantity"], parsed["unit"], parsed["ingredient_name"])
@@ -200,8 +199,10 @@ def process_recipe(recipe: dict) -> dict:
 
     # --- LAYER 3: VALIDATION & GUARDRAILS ---
     # Final metadata check
+    is_ingredients_ai = any([i.get("ai_refined") for i in processed_ingredients])
+    
     metadata = {
-        "ai_assisted": len(exception_queue) > 0 or is_adaptive,
+        "ai_assisted": is_ingredients_ai or is_adaptive,
         "uncertainty_rate": round(len(exception_queue) / max(len(raw_ingredients), 1), 2),
         "source_format": "adaptive_mapped" if is_adaptive else "standard"
     }
@@ -224,9 +225,13 @@ def process_recipe(recipe: dict) -> dict:
     final_cook = ai_classification.get("cook", [])
     
     # Fallback if AI fails: Use deterministic cleaning
+    steps_ai_success = bool(final_prep or final_cook)
     if not final_prep and not final_cook:
         final_prep = clean_instructions(raw_prep)
         final_cook = clean_instructions(raw_cook)
+    
+    # Update AI flag to include steps
+    metadata["ai_assisted"] = metadata["ai_assisted"] or steps_ai_success
     
     # Deduplicate steps using Fuzzy Logic (remove 90%+ similar strings)
     final_combined_list = []
@@ -291,7 +296,8 @@ def main():
         insert_meal_recipe(cur, meal_id, recipe_id, name)
         insert_meal_ingredients(cur, meal_id, structured["ingredients"])
 
-        print(f"Inserted: {name}")
+        is_ai = "🤖 [AI]" if structured["metadata"].get("ai_assisted") else "⚡ [Regex]"
+        print(f"Inserted: {structured['recipe_name']} {is_ai}")
 
     conn.commit()
     cur.close()

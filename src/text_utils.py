@@ -119,3 +119,50 @@ def format_measurement_as_text(qty, unit):
         result += f" {unit}"
         
     return result
+
+def clean_recipe_title(title: str) -> str:
+    """
+    Cleans noisy recipe titles by removing:
+    - Text after '|', '-', '(', ',' and '–' (en-dash)
+    - 'How to make' prefixes
+    - 'Tips' suffixes
+    - Excess whitespace/quotes
+    """
+    if not title:
+        return "Unknown Recipe"
+        
+    # Remove quotes
+    title = title.replace('"', '').replace("'", "")
+    
+    # 1. Handle "How to make" prefixes FIRST
+    title = re.sub(r'(?i)^(how to make|how to cook|recipe for)\s+', '', title.strip())
+
+    # 2. Split by common SEO separators
+    # Normalize dashes for easier splitting
+    title = title.replace('–', '-').replace('—', '-')
+    
+    # Split by '|' (Always safe)
+    if "|" in title:
+        title = title.split("|")[0]
+
+    # 3. Handle specific noisy suffixes like "- Tips..." or "- Steps..."
+    # We use regex to find " - " (space hyphen space) to avoid splitting words like "Coq-Au-Vin"
+    # This addresses "Idli Recipe & Idli Batter – Tips That Actually Work"
+    parts = re.split(r'\s+-\s+', title)
+    title = parts[0]
+
+    # 4. Handle parens (usually versions or restaurant style)
+    if "(" in title:
+        title = title.split("(")[0]
+        
+    # 5. Handle commas (often "Recipe, How to make")
+    if "," in title:
+        title = title.split(",")[0]
+
+    # 6. Remove "Recipe" from the END if it's redundant (e.g. "Sambar Recipe")
+    # But keep it if the title is ONLY "Recipe" (unlikely)
+    cleaned = title.strip()
+    if cleaned.lower().endswith(" recipe") and len(cleaned) > 10:
+         cleaned = cleaned[:-7]
+         
+    return cleaned.strip()

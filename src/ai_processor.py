@@ -1,7 +1,11 @@
 import google.generativeai as genai
 import os
+import re
 import json
 import logging
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -11,7 +15,7 @@ logger = logging.getLogger(__name__)
 api_key = os.getenv("GOOGLE_API_KEY")
 if api_key:
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-flash-latest')
 else:
     logger.warning("GOOGLE_API_KEY not found. AI features will be disabled (falling back to deterministic logic).")
     model = None
@@ -23,7 +27,10 @@ def _call_gemini(prompt: str) -> str:
         response = model.generate_content(prompt)
         return response.text.strip()
     except Exception as e:
-        logger.error(f"Error calling Gemini: {e}")
+        if "429" in str(e):
+            logger.warning("Gemini Quota Exceeded (429). Falling back to Regex logic for this recipe.")
+        else:
+            logger.error(f"Error calling Gemini: {e}")
         return ""
 
 # --- ALLOWED LLM USAGE: Ingredient Entity Disambiguation ---

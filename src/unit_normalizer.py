@@ -149,14 +149,8 @@ def normalize_quantity_unit(
     if quantity is not None and unit is None:
         unit = "g" if category == "solid" else "ml"
     
-    if note == "no conversion applied" and quantity is not None:
-        note = f"Default values assigned: {quantity} {unit}"
-
-    # 🔥 Special Handling for Common Ingredients (Ensure info is never empty)
-    if note == "no conversion applied" or not note:
-        if is_common:
-             note = "Adjusted to taste / standard requirement"
-        else:
-             note = "Quantity as per recipe requirement / instructions"
+    # Removed default messaging per user request ("like {}")
+    # if note == "no conversion applied", it will result in blank ingredient_info
+    pass
 
     return quantity, unit, note

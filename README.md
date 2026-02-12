@@ -116,9 +116,32 @@ python3 src/test_adaptive_pipeline.py
 - [x] **Clean Logic**: Hard boundary between LLM (Semantic) and Regex (Numeric).
 - [x] **Metric Accuracy**: Standardized `g` and `ml` values for all ingredients.
 - [x] **Noise Filtering**: AI-assisted filtering of web ads from instructions.
+- [x] **Smart Classification**: Dynamic meal type detection (e.g., "Avocado Toast" -> Breakfast).
 - [x] **Instruction Quality**: "Total_steps" formatting and fuzzy deduplication implemented.
 - [x] **Ingredient Hygiene**: Synonyms cleaned and unit conversions structured.
 - [x] **Documentation**: Clear technical justification provided in `assessment_compliance.md`.
+
+---
+
+## 🎭 AI Capabilities & Demo
+The pipeline includes a **Live Demo Script** to showcase the AI's "magic" without running the full ETL process.
+
+### Run the Demo
+```bash
+python3 demo_ai_features.py
+```
+### Features Showcased
+1.  **Smart Meal Categorization**:
+    *   *Input*: "Avocado Toast" (No keywords like 'dosa')
+    *   *AI Output*: `Breakfast`
+    *   *Mechanism*: Falls back to AI only when deterministic keywords fail.
+2.  **Context-Aware Disambiguation**:
+    *   *Input*: "Masala" (in "Chicken Tikka" context)
+    *   *AI Output*: `Garama Masala`
+3.  **Noise Filtering**:
+    *   *Input*: "Follow me on Instagram!"
+    *   *AI Output*: `[Removed]`
+4.  **Interactive Mode**: Type any recipe name to test the classifier in real-time.
 
 ---
 

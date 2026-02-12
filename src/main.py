@@ -75,11 +75,16 @@ def load_dataset():
 # ------------------------------------
 def infer_meal_type(recipe_name: str) -> str:
     name = recipe_name.lower()
-    if any(k in name for k in ["dosa", "idli", "poha", "upma", "pongal", "paratha"]):
+    # Layer 1: Deterministic Keywords (Fast/Reliable)
+    if any(k in name for k in ["dosa", "idli", "poha", "upma", "pongal","Breakfast","paratha"]):
         return "breakfast"
     if any(k in name for k in ["rice", "biryani", "pulao", "lunch"]):
         return "lunch"
-    return "dinner"
+    
+    # Layer 2: Semantic AI Fallback (If keywords fail)
+    # This prevents "Everything is Dinner" issue
+    ai_meal = ai_processor.categorize_meal(recipe_name)
+    return ai_meal
 
 
 # ------------------------------------

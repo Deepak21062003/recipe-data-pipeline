@@ -126,3 +126,29 @@ def classify_steps(raw_steps: list) -> dict:
         return json.loads(response_text)
     except:
         return {"prep": [], "cook": [], "noise": []}
+
+def categorize_meal(recipe_name: str) -> str:
+    """
+    LLM TASK: Meal Categorization.
+    Determines if a recipe is best for 'breakfast', 'lunch', or 'dinner'.
+    Regex cannot solve this for unknown/international recipes (e.g., 'Shakshuka').
+    """
+    if not model:
+        return "dinner"
+
+    prompt = f"""
+    Based on the recipe name: "{recipe_name}", classify it into one of these meal types:
+    - "breakfast"
+    - "lunch"
+    - "dinner"
+    
+    Return ONLY the string (e.g., "breakfast").
+    """
+    response_text = _call_gemini(prompt).lower()
+    
+    # Normalize result
+    for meal in ["breakfast", "lunch", "dinner"]:
+        if meal in response_text:
+            return meal
+            
+    return "dinner"
